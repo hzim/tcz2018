@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  {% load static %}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <meta name="keywords" content="Tennisclub, Platzreservierung ">
+  <link rel="icon" href="{% static 'img/profile.png' %}">
+  <title>Platz Reservierung - {% block title %}TC Zellerndorf Platzreservierung{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css" />
+</head>
+
+<body>
+  <div class="wrapper">
+    <header class="header">
+      <div class="header_logo">
+        <a href="{% url 'courts' year='0000' month='00' day='00' %}">Heute</a>
+      </div>
+
+      {% if weekday %}
+      <label class="header_date_label">{{ weekday }}</label>
+      <div class="header_date">
+        <form action="{% url 'courts' day=savedDate.day month=savedDate.month year=savedDate.year %}" method="post">
+          {% csrf_token %}
+
+          <button class="navicon" name="DayBack" type="submit">
+            <img src="{% static 'img/backward.png' %}">
+          </button>
+          <input name="requestDate" class="dateinput" id="id_req_date" type="date" value={{ requestDate }} min="2018-01-01" max="2018-12-31"
+            required>
+          <button class="navicon" name="DayForward" type="submit">
+            <img src="{% static 'img/forward.png' %}">
+          </button>
+          <button class="navbutton" id="id_SetDate" name="SetDate" type="submit" style="display:none;">Datum einstellen</button>
+        </form>
+      </div>
+
+      {% if user.is_authenticated %} {% if allUsers %}
+      <label class="header_user_label">Reservieren/Freigeben für:</label>
+      <div class="header_user">
+        <form action="{% url 'courts' day=savedDate.day month=savedDate.month year=savedDate.year %}" method="post">
+          <select name="selectedUser" class="userinput" data-live-search="true" data-size="10" id="id_selectedUser">
+            {% for user in allUsers %}
+            <option>{{ user }}</option>
+            {% endfor %}
+          </select>
+          <!-- style will be changed if javascript is working -->
+          <button class="button_1" id="id_NavSave" name="SetHour">SPEICHERN</button>
+          <button class="button" id="id_SetUser" name="SetUser" style="display:none" type="submit">Neuer User</button>
+      </div>
+      {% else %}
+      <label class="header_user_label"></label>
+      <label class="header_user"></label>
+      {% endif %} {% else %}
+      <label class="header_user_label"></label>
+      <label class="header_user"></label>
+      {% endif %} {% else %}
+      <label class="header_date_label"></label>
+      <label class="header_date"></label>
+      <label class="header_user_label"></label>
+      <label class="header_user"></label>
+      {% endif %}
+
+      <div class="header_link_help">
+        <a href="{% url 'home' %}">Hilfe</a>
+      </div>
+
+      {% if user.is_authenticated %}
+      <div class="header_login_label">angemeldet als:</div>
+      <div class="header_login_name">{{ user.get_username }}</div>
+      <div class="header_login_link">
+        <a href="{% url 'auth_logout' %}">
+          Abmelden
+          <span class="icon">
+            <img src="{% static 'img/exit.png' %}">
+          </span>
+        </a>
+      </div>
+      {% else %}
+      <div class="header_login_label"></div>
+      <div class="header_login_name"></div>
+      <div class="header_login_link">
+        <a href="{% url 'auth_login' %}">
+          Anmelden
+          <span class="icon">
+            <img src="{% static 'img/enter.png' %}">
+          </span>
+        </a>
+      </div>
+      {% endif %}
+    </header>
+
+    {% block body_block %}{% endblock %}
+  
+  <footer>
+    <a href="http://www.tczellerndorf.at">&copy 2018 Tennisclub Zellerndorf, ZVR 330668948</a>
+  </footer>
+  <script src="{% static 'js/detail.js' %}"></script>
+  <script>
+    // Handler when the DOM is fully loaded
+    dateInput.init();
+    processChoices.init();
+  </script>
+  </div>
+</body>
+
+</html>

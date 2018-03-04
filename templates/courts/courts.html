@@ -1,0 +1,48 @@
+{% extends "base.html" %} {% block body_block %} {% if dangerMessages %} {% for message in dangerMessages %}
+<div class="message message-error">
+  <strong>Fehler!</strong> {{ message }}
+</div>
+{% endfor %} {% else %} {% if infoMessages %} {% for message in infoMessages %}
+<div class="message message-info">
+  <strong>Achtung:</strong> {{ message }}
+</div>
+{% endfor %} {% else %} {% if successMessages %} {% for message in successMessages %}
+<div class="message message-success">
+  <strong>Nächste Reservierung:</strong> {{ message }}
+</div>
+{% endfor %} {% endif %} {% endif %} {% endif %}
+
+<div class="content">
+  <form action="{% url 'courts' day=savedDate.day month=savedDate.month year=savedDate.year %}" method="post">
+    {% csrf_token %}
+    <table cellpadding="1">
+      <thead>
+        <tr>
+          <th width="20">Stunde</th>
+          <th>Platz 1</th>
+          <th>Platz 2</th>
+          <th>Platz 3</th>
+          <th>Platz 4</th>
+          <th>Platz 5</th>
+          <th>Platz 6</th>
+        </tr>
+      </thead>
+      {% for hour,courts in choiceTable.items %}
+      <tr>
+        <th width="100">{{ hour }}</th>
+        {% for court in courts %}
+        <td class="table-content" bgcolor="{{ court.bgcolor }}">
+          <input id="id_{{ court.name }}" name="choice" value="{{ court.name }}" {{ court.disabled }} type="{{ court.type }}">
+          <label for="id_{{ court.index }}">{{ court.label }}</label>
+        </td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+
+    </table>
+    <button class="button_1" id="id_AllSave" class="btn btn-primary " name="SetHour" type="submit" style="display:none">Reservieren/Freigeben</button>
+</div>
+</div>
+</form>
+</div>
+{% endblock %}
