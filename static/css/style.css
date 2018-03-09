@@ -1,0 +1,237 @@
+
+/* default */
+body{
+    font: 15px/1.5  Helvetica, Arial, sans-serif;
+    padding: 0;
+    background-color: #c4c4c4;
+}
+
+/* grid layout classes */
+.header_logo {
+    grid-area: header_logo;
+}
+
+.header_date_label {
+    grid-area: header_date_label;
+}
+
+.header_date {
+    grid-area: header_date;
+}
+
+.header_user_label {
+    grid-area: header_user_label;
+}
+
+.header_user {
+    grid-area: header_user;
+}
+
+.header_help_link {
+    grid-area: header_help_link;
+}
+
+.header_login_label {
+    grid-area: header_login_label;
+}
+
+.header_login_link {
+    grid-area: header_login_link;
+}
+
+.header_login_name {
+    grid-area: header_login_name;
+}
+
+.header {
+    display: grid;
+    grid-area: header;
+    grid-gap: 0.2em;
+    grid-template-areas:
+      "header_logo"
+      "header_date_label"
+      "header_date"
+      "header_user_label"
+      "header_user"
+      "header_login_label"
+      "header_login_name"
+      "header_help_link"
+      "header_login_link"
+}
+
+.message {
+    grid-area: message;
+}
+
+.content {
+    grid-area: content;
+}
+
+.footer {
+    grid-area: footer;
+}
+
+/* grid layout default*/
+.wrapper{
+    display: grid;
+    grid-gap: 0.2em;
+    grid-template-areas:
+      "header"
+      "message"
+      "content"
+      "footer"
+  }
+
+/* media query
+ * header for normal computer displays
+ * smaller displays will get default .header layout - see above
+*/
+@media only screen and (min-width: 1500px)  {
+    .header {
+        grid-template-columns: 1fr 3fr 4fr 2fr 2fr;
+        grid-template-areas:
+          "header_logo   header_date_label  header_user_label  header_login_label  header_help_link"
+          "header_logo   header_date        header_user        header_login_name   header_login_link"
+    }
+}
+
+@media only screen and (min-width: 750px) and (max-width: 1499px) {
+    .header {
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-areas:
+          "header_logo         header_login_link  header_help_link"
+          "header_date_label   header_date        header_date"
+          "header_user_label   header_user        header_user"
+          "header_login_label  header_login_name  header_login_name"
+    }
+}
+/* styles for classes */
+.button_1{
+    height: 40px;
+    background: #e8491d;
+    border: 0;
+    margin-left: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    color: #e4e4e4;
+    vertical-align: top;
+    font-size: 28px;
+}
+
+.container{
+    width:80%;
+    margin:auto;
+    overflow:hidden;
+}
+
+.content{
+    border-bottom: #e8491d 3px solid;
+}
+
+.header_login_name{
+    color: #e4e4e4;
+    font-size: 25px;
+}
+
+.message-error{
+    padding: 10px;
+    background: #35424a;
+    color: #e4e4e4;
+    border-bottom: #e8491d 3px solid;
+}
+
+.message-info{
+    padding: 10px;
+    background: #35424a;
+    color: #e4e4e4;
+    border-bottom: #e8491d 3px solid;
+}
+
+.message-success{
+    padding: 10px;
+    background: #35424a;
+    color: #e4e4e4;
+    border-bottom: #e8491d 3px solid;
+}
+
+.navicon{
+    height: 42px;
+    width: 42px;
+    padding: 0%;
+    border: 0;
+}
+
+.userinput{
+    font-size: 28px;
+    margin: 0px;
+}
+
+.table-content{
+    width: 350px;
+    height: 40px;
+    font-size: 20px;
+}
+
+/* styles for html elements */
+
+footer{
+    padding: 0px;
+    color: #e4e4e4;
+    background: #e8491d;
+    text-align: center;
+}
+
+footer a{
+    color: #e4e4e4;
+    text-decoration: none;
+    font-size: 20px;
+    margin-left: 10px;
+}
+
+form{
+    display: inline-block;
+}
+
+header{
+    background: #35424a;
+    color: #e4e4e4;
+    padding-top: 5px;
+    min-height: 70px;
+    border-bottom: #e8491d 3px solid;
+}
+
+header a{
+    color: #e8491d;
+    text-decoration: none;
+    font-size: 25px;
+    margin-left: 10px;
+}
+
+header a:hover{
+    color: #cccccc;
+}
+
+header nav{
+    float: right;
+    margin-top: 10px;
+}
+
+hr { 
+    width: 95%; 
+    height: 5px; 
+    margin: 0 auto;
+    background: #e8491d;;
+}
+
+input[type="date"]{
+    padding: 5px;
+    height: 28px;
+    width: 250px;
+    font-size: 28px;
+    vertical-align: top;
+}
+
+th{
+    background-color: #35424a;
+    color: #e4e4e4;;
+}
