@@ -24,23 +24,6 @@ FREE_USER = 'Frei'
 # username for kivy app
 APP_USER = 'TCZ'
 
-# superusers usernames
-SUPER_USERS = ('Frei',
-               'TCZ',
-               'TPI',
-               'Damen1',
-               'Damen2',
-               'Damen35',
-               'Damen45',
-               'Herren1',
-               'Herren2',
-               'Herren3',
-               'Herren35_1',
-               'Herren35_2',
-               'Herren55',
-               'Herren65',
-               'Jugend',
-              )
 TENNIS_PLATZ_USER = 'Tennisplatz'
 
 # offset for court in checkbox id - the checkbox id is calculated
@@ -50,14 +33,11 @@ COURT_FAKT = 100
 # Eintragen einer Stunde die nicht als Reservierung zählt ab Minute 45
 FREE_MINUTE = 45
 
-#some colors for backgrounds
+# some colors for backgrounds
 BG_FREE = "#e4e4e4"
 BG_OWN = "#FF7FFF"
 BG_OTHER = "#7FFFFF"
 BG_FREEHOUR = "#CFCFCF"
-
-BG_KIVY_FREE = [0.2, 0.2, 0.2, 1]
-BG_KIVY_RESERVED = [0.23, 0.23, 0.70, 1.0]
 
 # results from saveChoices
 STORE_ERROR = 0
@@ -86,4 +66,3 @@ EMAIL_SUBJECT = "Tennisplatz Reservierung"
 EMAIL_BODY_TEMPLATE = "Tennisplatz %s: von %s für %s, Platz=%d, Zeit=%s, %02d Uhr"
 EMAIL_ACTIONTEXT = ["", "Stornierung", "Reservierung"]
 
-APP_USERS_PER_PAGE = 78      # sollte ein vielfaches des Grid Rasters sein

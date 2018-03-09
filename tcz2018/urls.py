@@ -28,14 +28,14 @@ router.register(r'tczusers', UserViewSet)
 router.register(r'tczhours', TczHourViewSet)
 
 urlpatterns = [
-    url(r'^$', home, name='home'),
-    url(r'^(?P<year>[0-9]{4})/(?P<month>[0-9]{2})/(?P<day>[0-9]{2})/',
-        courts, name='courts'),
-    url(r'^auth_login/$', auth_views.login,
-        {'template_name': 'users/login.html'}, name='auth_login'),
-    url(r'^auth_logout/$', auth_views.logout,
-        {'next_page': '/'}, name='auth_logout'),
-    url(r'^admin/', admin.site.urls, name='admin'),
-    url(r'^', include(router.urls)),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+  url(r'^$', home, name='home'),
+  url(r'^(?P<year>[0-9]{4})/(?P<month>[0-9]{2})/(?P<day>[0-9]{2})/',
+      courts, name='courts'),
+  url(r'^auth_login/$', auth_views.login,
+      {'template_name': 'users/login.html'}, name='auth_login'),
+  url(r'^auth_logout/$', auth_views.logout,
+      {'next_page': '/'}, name='auth_logout'),
+  url(r'^admin/', admin.site.urls, name='admin'),
+  url(r'^', include(router.urls)),
+  url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
