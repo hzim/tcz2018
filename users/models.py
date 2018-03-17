@@ -3,8 +3,10 @@ from django.contrib.auth.models import AbstractUser, UserManager
 
 
 class CustomUserManager(UserManager):
-    pass
+  """ inherit from django """
+  pass
 
 
 class CustomUser(AbstractUser):
-    objects = CustomUserManager()
+  """ inherit from django """
+  objects = CustomUserManager()

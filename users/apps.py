@@ -1,5 +1,7 @@
+""" user config """
 from django.apps import AppConfig
 
 
 class UsersConfig(AppConfig):
-    name = 'users'
+  """ inherit from django """
+  name = 'users'
