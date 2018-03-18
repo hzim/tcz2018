@@ -1,0 +1,27 @@
+{% extends "base.html" %} 
+{% block body_block %}
+<div class="content">
+
+{% if user.is_superuser %}
+<p>
+  <a class="button_1" href="{% url 'courtstatuscreate' %}">Neue Platzsperre eingeben</a>
+  <br>
+</p>
+{% endif %}
+  
+{% if object_list %}
+<h1>Tennisplätze gesperrt:</h1>
+{% for courtstatus in object_list %}
+<p class="userinput">
+  Datum: {{ courtstatus.lock_date|date:'D, d N Y' }} Ursache: {{ courtstatus.lock_comment }} (Nummer: {{ courtstatus.id }})
+  {% if user.is_superuser %}
+    <a class="button_1" href="{% url 'courtstatusdelete' courtstatus.id %}">Sperre aufheben</a>
+  {% endif %}
+</p>
+
+{% endfor %}
+{% else %}
+<p class="userinput">Keine Sperren. Plätze sind bespielbar.</p>
+{% endif %}
+</div>
+{% endblock %}

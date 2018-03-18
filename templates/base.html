@@ -16,14 +16,23 @@
 <body>
   <div class="wrapper">
     <header class="header">
-      <div class="header_logo">
-        <a href="{% url 'courts' year='0000' month='00' day='00' %}">Heute</a>
+      <div class="header_today">
+        <a href="{% url 'courtreservation' year='0000' month='00' day='00' %}">Heute</a>
       </div>
-
       {% if weekday %}
+      {% if courtstatus %}
+      <div class="header_lock">
+          <a class="courtstatusnok" href="{% url 'courtstatusindex' %}">Platzsperre</a>
+      </div>
+      {% else %}
+      <div class="header_lock">
+          <a class="courtstatusok" href="{% url 'courtstatusindex' %}">Platz OK</a>
+      </div>
+      {% endif %}
+      
       <label class="header_date_label">{{ weekday }}</label>
       <div class="header_date">
-        <form action="{% url 'courts' day=savedDate.day month=savedDate.month year=savedDate.year %}" method="post">
+        <form action="{% url 'courtreservation' day=savedDate.day month=savedDate.month year=savedDate.year %}" method="post">
           {% csrf_token %}
 
           <button class="navicon" name="DayBack" type="submit">
@@ -41,7 +50,7 @@
       {% if user.is_authenticated %} {% if allUsers %}
       <label class="header_user_label">Reservieren/Freigeben für:</label>
       <div class="header_user">
-        <form action="{% url 'courts' day=savedDate.day month=savedDate.month year=savedDate.year %}" method="post">
+        <form action="{% url 'courtreservation' day=savedDate.day month=savedDate.month year=savedDate.year %}" method="post">
           <select name="selectedUser" class="userinput" data-live-search="true" data-size="10" id="id_selectedUser">
             {% for user in allUsers %}
             <option>{{ user }}</option>
@@ -58,6 +67,7 @@
       <label class="header_user_label"></label>
       <label class="header_user"></label>
       {% endif %} {% else %}
+      <label class="header_lock"></label>
       <label class="header_date_label"></label>
       <label class="header_date"></label>
       <label class="header_user_label"></label>
@@ -65,7 +75,7 @@
       {% endif %}
 
       <div class="header_link_help">
-        <a href="{% url 'home' %}">Hilfe</a>
+        <a href="{% url 'helppage' %}">Hilfe</a>
       </div>
 
       {% if user.is_authenticated %}
@@ -93,10 +103,10 @@
       {% endif %}
     </header>
 
-    {% block body_block %}{% endblock %}
-  
+    {% block body_block %}
+    {% endblock %}
   <footer>
-    <a href="http://www.tczellerndorf.at">&copy 2018 Tennisclub Zellerndorf, ZVR 330668948</a>
+    &copy 2018 Tennisclub Zellerndorf, ZVR 330668948
   </footer>
   <script src="{% static 'js/detail.js' %}"></script>
   <script>

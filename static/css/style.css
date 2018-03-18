@@ -7,8 +7,16 @@ body{
 }
 
 /* grid layout classes */
-.header_logo {
-    grid-area: header_logo;
+.header_today {
+    grid-area: header_today;
+}
+
+.header_lock {
+    grid-area: header_lock;
+}
+
+.header_lock {
+    grid-area: header_lock;
 }
 
 .header_date_label {
@@ -48,7 +56,8 @@ body{
     grid-area: header;
     grid-gap: 0.2em;
     grid-template-areas:
-      "header_logo"
+      "header_today"
+      "header_lock"
       "header_date_label"
       "header_date"
       "header_user_label"
@@ -88,10 +97,10 @@ body{
 */
 @media only screen and (min-width: 1500px)  {
     .header {
-        grid-template-columns: 1fr 3fr 4fr 2fr 2fr;
+        grid-template-columns: 1fr 3fr 3fr 2fr 2fr;
         grid-template-areas:
-          "header_logo   header_date_label  header_user_label  header_login_label  header_help_link"
-          "header_logo   header_date        header_user        header_login_name   header_login_link"
+          "header_today   header_date_label  header_user_label  header_login_label  header_help_link"
+          "header_lock    header_date        header_user        header_login_name   header_login_link"
     }
 }
 
@@ -99,10 +108,10 @@ body{
     .header {
         grid-template-columns: 1fr 1fr 1fr;
         grid-template-areas:
-          "header_logo         header_login_link  header_help_link"
-          "header_date_label   header_date        header_date"
-          "header_user_label   header_user        header_user"
-          "header_login_label  header_login_name  header_login_name"
+          "header_today        header_lock        header_login_link" 
+          "header_help_link    header_date_label  header_date"       
+          "header_date         header_user_label  header_user"       
+          "header_user         header_login_label header_login_name" 
     }
 }
 /* styles for classes */
@@ -135,20 +144,23 @@ body{
 
 .message-error{
     padding: 10px;
-    background: #35424a;
+    font-size: 20px;
+    background: #e8491d;
     color: #e4e4e4;
     border-bottom: #e8491d 3px solid;
 }
 
 .message-info{
     padding: 10px;
-    background: #35424a;
+    font-size: 20px;
+    background: #FFFF00;
     color: #e4e4e4;
     border-bottom: #e8491d 3px solid;
 }
 
 .message-success{
     padding: 10px;
+    font-size: 20px;
     background: #35424a;
     color: #e4e4e4;
     border-bottom: #e8491d 3px solid;
@@ -172,20 +184,37 @@ body{
     font-size: 20px;
 }
 
+.courtstatusnok{
+    color: #e8491d;
+    text-decoration: none;
+    font-size: 25px;
+    margin-left: 10px;
+}
+
+.courtstatusok{
+    color: #97a4ac;
+    text-decoration: none;
+    font-size: 25px;
+    margin-left: 10px;
+}
+
+.courtunlock:hover{
+    color: #97a4ac;
+    text-decoration: none;
+    font-size: 25px;
+    margin-left: 10px;
+}
+
 /* styles for html elements */
 
 footer{
     padding: 0px;
     color: #e4e4e4;
-    background: #e8491d;
+    background: #35424a;
     text-align: center;
-}
-
-footer a{
-    color: #e4e4e4;
-    text-decoration: none;
     font-size: 20px;
-    margin-left: 10px;
+    margin-left: 0px;
+    text-decoration: none;
 }
 
 form{
@@ -200,14 +229,14 @@ header{
     border-bottom: #e8491d 3px solid;
 }
 
-header a{
+a{
     color: #e8491d;
     text-decoration: none;
     font-size: 25px;
     margin-left: 10px;
 }
 
-header a:hover{
+a:hover{
     color: #cccccc;
 }
 
@@ -234,4 +263,14 @@ input[type="date"]{
 th{
     background-color: #35424a;
     color: #e4e4e4;;
+}
+
+p label{
+    width: 300px;
+    margin: 10px;
+}
+#id_lock_comment, #id_username, #id_password{
+    font-size: 28px;
+    margin: 0px;
+    width: 400px;
 }
