@@ -97,7 +97,7 @@ body{
 */
 @media only screen and (min-width: 1500px)  {
     .header {
-        grid-template-columns: 1fr 3fr 3fr 2fr 2fr;
+        grid-template-columns: 1fr 2fr 3fr 2fr 1fr;
         grid-template-areas:
           "header_today   header_date_label  header_user_label  header_login_label  header_help_link"
           "header_lock    header_date        header_user        header_login_name   header_login_link"
@@ -106,12 +106,13 @@ body{
 
 @media only screen and (min-width: 750px) and (max-width: 1499px) {
     .header {
-        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-columns: 1fr 3fr;
         grid-template-areas:
-          "header_today        header_lock        header_login_link" 
-          "header_help_link    header_date_label  header_date"       
-          "header_date         header_user_label  header_user"       
-          "header_user         header_login_label header_login_name" 
+          "header_today        header_help_link"      
+          "header_lock         header_login_link" 
+          "header_date_label   header_date"       
+          "header_user_label   header_user"       
+          "header_login_label  header_login_name" 
     }
 }
 /* styles for classes */
@@ -119,7 +120,7 @@ body{
     height: 40px;
     background: #e8491d;
     border: 0;
-    margin-left: 10px;
+    border-radius: 8px;
     padding-left: 10px;
     padding-right: 10px;
     color: #e4e4e4;
@@ -153,7 +154,7 @@ body{
 .message-info{
     padding: 10px;
     font-size: 20px;
-    background: #FFFF00;
+    background: #8b290e;
     color: #e4e4e4;
     border-bottom: #e8491d 3px solid;
 }
@@ -222,7 +223,7 @@ form{
 }
 
 header{
-    background: #35424a;
+    background: #35424a;    
     color: #e4e4e4;
     padding-top: 5px;
     min-height: 70px;
@@ -255,7 +256,7 @@ hr {
 input[type="date"]{
     padding: 5px;
     height: 28px;
-    width: 250px;
+    width: 200px;
     font-size: 28px;
     vertical-align: top;
 }
@@ -272,5 +273,5 @@ p label{
 #id_lock_comment, #id_username, #id_password{
     font-size: 28px;
     margin: 0px;
-    width: 400px;
+    width: 600px;
 }

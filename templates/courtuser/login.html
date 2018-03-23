@@ -1,19 +1,22 @@
 {% extends "base.html" %}
 
 {% block body_block %}
-
-  <h2>Anmelden</h2>
+<div class="message"></div>
+<div class="content">
   <form method="post">
     {% csrf_token %}
-    <p>  
-      <label for="id_username">Name:</label> 
+    <fieldset>
+      <legend>Anmelden:</legend>
+      <label for="id_username">Name:</label><br>
       <input type="text" name="username" required id="id_username" />
-    </p>
-    <p>
-      <label for="id_password">Passwort:</label>
+      <br>
+      <label for="id_password">Passwort:</label><br>
       <input type="password" name="password" required id="id_password" />
-    </p>
-    <button class="button_1" type="submit">Anmelden</button>
+      <br>
+      <p></p>
+      <button class="button_1" type="submit">Anmelden</button>
+    </fieldset> 
+    <p></p>
   </form>
-
+</div>
 {% endblock %}

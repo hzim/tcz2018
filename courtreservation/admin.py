@@ -7,9 +7,9 @@ from .models import TczHour
 class TczHourAdmin(admin.ModelAdmin):
   """ one hour """
   fields = ('tcz_date', 'tcz_user', 'tcz_court',
-            'tcz_hour', 'tcz_user_change', 'tcz_free')
+            'tcz_hour', 'tcz_user_change', 'tcz_free', 'tcz_trainer')
   list_display = ('tcz_date', 'tcz_user', 'tcz_court',
-                  'tcz_hour', 'tcz_user_change', 'tcz_free')
+                  'tcz_hour', 'tcz_user_change', 'tcz_free', 'tcz_trainer')
   # admin_order_field = 'tcz_date'
 
 

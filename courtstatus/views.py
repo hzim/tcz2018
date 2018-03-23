@@ -1,19 +1,31 @@
 """ views for the court locking app """
+import locale
+import os
+
 from django.views.generic import CreateView, ListView, DeleteView
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from django import forms
+
 from .models import TczCourtStatus, TczCourtStatusForm
+
 
 def getCourtStatus(iDate):
   """ get court status """
   try:
-    lStatusMessage = TczCourtStatus.objects.all()[0].lock_comment
+    if os.name == 'nt':
+      locale.setlocale(locale.LC_TIME, "deu_deu")
+    else:
+      locale.setlocale(locale.LC_TIME, "de_DE.UTF-8")
+    lStatusMessage = iDate.strftime("%A %d. %B %Y") + ' - ' +\
+        TczCourtStatus.objects.all().filter(lock_date=iDate)[0].lock_comment
     return lStatusMessage
   except IndexError:
     return ""
 
+
 class ViewIndex(ListView):
+  """ class based view for list of TczCourtStatus objects """
   template_name = 'courtstatus/index.html'
 
   def get_queryset(self):
@@ -21,13 +33,13 @@ class ViewIndex(ListView):
 
 
 class ViewCreate(CreateView):
+  """ class based view for create form """
   template_name = 'courtstatus/create.html'
   model = TczCourtStatus
   form_class = TczCourtStatusForm
 
   def form_valid(self, form):
-    # Don't call super(..) if you want to process the model further(add timestamp, and other fields, etc)
-    # super(ViewCreatePost, self).form_valid(form)
+    # check if the user is allowed to create
     if not self.request.user.is_superuser:
       return HttpResponseRedirect(reverse('courtstatusindex'))
     model = form.save(commit=False)
@@ -37,6 +49,7 @@ class ViewCreate(CreateView):
 
 
 class ViewDelete(DeleteView):
+  """ class based view for delete form """
   template_name = 'courtstatus/delete.html'
   model = TczCourtStatus
   # Notice get_success_url is defined here and not in the model, because the model will be deleted

@@ -23,8 +23,11 @@ END_DAY = 1
 FREE_USER = 'Frei'
 # username for kivy app
 APP_USER = 'TCZ'
-
+# user for Tennisplatz raspberry
 TENNIS_PLATZ_USER = 'Tennisplatz'
+# Trainer
+TPI_NAME = 'TPI'
+TPI_FREE_USER = 'Frei TPI'
 
 # offset for court in checkbox id - the checkbox id is calculated
 # COURT_FAKT*courtnumber + hour
@@ -35,9 +38,12 @@ FREE_MINUTE = 45
 
 # some colors for backgrounds
 BG_FREE = "#e4e4e4"
-BG_OWN = "#FF7FFF"
-BG_OTHER = "#7FFFFF"
+BG_OWN = "#4DA6FF"
+BG_OTHER = "#99CCFF"
 BG_FREEHOUR = "#CFCFCF"
+BG_TPI = "#FFDD99"
+BG_TPI_FREE = "#FFEEAA"
+BG_SUPER_USER = "#FF6600"
 
 # results from saveChoices
 STORE_ERROR = 0

@@ -1,12 +1,19 @@
 {% extends "base.html" %} 
 
 {% block body_block %}
+<div class="message"></div>
+<div class="content">
+  <br>
   {% if user.is_superuser %}
   <form method="post">
     {% csrf_token %}
-        <button class="button_1">Platzsperre aufheben bestätigen</button>
+    <button class="button_1">Platzsperre aufheben bestätigen</button>
+    <br>
   </form>
   {% else %}
-    <p class="userinput">Sperren nur für Berechtige erlaubt</p>
+    <br>
+    <p class="userinput">Aufheben der Sperre nur für Berechtige erlaubt!</p>
   {% endif %}
+  <br>
+</div>
 {% endblock %}

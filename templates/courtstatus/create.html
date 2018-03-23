@@ -1,19 +1,30 @@
 {% extends "base.html" %} 
 {% block body_block %}
+<div class="message"></div>
 <div class="content">
   {% if user.is_superuser %}
     <form action="" method="post">
       {% csrf_token %}
-      <p>  
-        <label for="id_lock_date">Datum:</label> 
+      <fieldset>
+        <legend>neue Platzsperre:</legend>  
+        <label for="id_lock_date">Datum:</label>
+        <br>
         <input type="date" name="lock_date" required id="id_lock_date" />
+        <br>
         <label for="id_lock_comment">Grund der Sperre:</label> 
+        <br>
         {{ form.lock_comment }}
+        <br>
+        <p></p>
         <button class="button_1" type="submit">Speichern</button>
-      </p>
+        <br>
+      </fieldset>
+      <p></p>
     </form>
   {% else %}
-    <p class="userinput">Sperren nur für Berechtige erlaubt</p>
+    <br>
+    <p class="userinput">Sperren nur für Berechtige erlaubt!</p>
+    <br>
   {% endif %}
 </div>
 {% endblock %}

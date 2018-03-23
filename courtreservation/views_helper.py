@@ -3,6 +3,7 @@ import locale
 import logging
 import os
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
 
 from courtuser.models import CourtUser
@@ -11,8 +12,8 @@ from .constants import EMAIL_BODY_TEMPLATE, EMAIL_SUBJECT, EMAIL_ADDRESS,\
     EMAIL_ACTIONTEXT, SUCCESS_RESERVATION,\
     MAX_RESERVATION_DAYS,\
     MAX_FUTURE_DAYS,\
-    BG_FREE, BG_FREEHOUR, BG_OTHER, BG_OWN,\
-    FREE_USER,\
+    BG_FREE, BG_FREEHOUR, BG_OTHER, BG_OWN, BG_TPI, BG_TPI_FREE, BG_SUPER_USER,\
+    FREE_USER, TPI_FREE_USER, TPI_NAME,\
     HOUR_START, HOURS_PER_DAY,\
     MIN_MONTH, MAX_MONTH, FREE_MINUTE,\
     COURT_FAKT, NUM_COURTS,\
@@ -31,8 +32,8 @@ def date_is_wrong(date_to_show, date_today):
   """
   if ((date_to_show.year != date_today.year) or
           (date_to_show.month < MIN_MONTH) or
-              (date_to_show.month > MAX_MONTH)
-          ):
+      (date_to_show.month > MAX_MONTH)
+      ):
     return True
   return False
 
@@ -145,13 +146,14 @@ def get_next_reservation(iUser):
     return None
 
 
+"""
+not used at the moment - this is the old rule for reservation
+check if the user has one reservation since Monday
+for a normal user only 1 hour per week is allowed
+on Sunday after 21h it is allowed to reserve a new hour if there
+is no reserved hour in the future
+
 def user_has_free_reservation_old(iUser):
-  """ not used at the moment - this is the old rule for reservation
-      check if the user has one reservation since Monday
-      for a normal user only 1 hour per week is allowed
-      on Sunday after 21h it is allowed to reserve a new hour if there
-      is no reserved hour in the future
-  """
   try:
     now = datetime.now()
     l_datenow = date.today()
@@ -175,6 +177,7 @@ def user_has_free_reservation_old(iUser):
     return None
   except:
     return None
+"""
 
 
 def user_has_reservation(iUser):
@@ -187,9 +190,8 @@ def user_has_reservation(iUser):
     l_datenow = date.today()
     l_hourcnt = 0
     for tcz_hour in TczHour.objects.filter(tcz_user=iUser)\
-        .filter(tcz_date__gte=l_datenow)\
-            .order_by('tcz_date', 'tcz_hour'):
-      if not tcz_hour.tcz_free:
+            .filter(tcz_date__gte=l_datenow).order_by('tcz_date', 'tcz_hour'):
+      if not tcz_hour.tcz_free and not tcz_hour.tcz_trainer:
         # found an already reserved hour for this week
         l_hourcnt += 1
         if l_hourcnt == MAX_RESERVATION_DAYS:
@@ -217,9 +219,10 @@ def make_choice_button(iCourt, iHour, tcz_hour, iUser):
     if iUser.is_anonymous:
       # not logged in
       dis = 'disabled'
-    if tcz_hour and tcz_hour.tcz_user.username != lusername:
-      # normal users are not allowed to change a occupied hour
-      dis = 'disabled'
+    if tcz_hour:  # hour is reserved
+      if tcz_hour.tcz_user.username != lusername:  # hour is reserved not for me
+        if tcz_hour.tcz_user.username != TPI_FREE_USER:  # hour is not a free trainer hour
+          dis = 'disabled'
 
   # set the background color
   bgc = ''
@@ -227,6 +230,16 @@ def make_choice_button(iCourt, iHour, tcz_hour, iUser):
     bgc = BG_FREE
   elif tcz_hour.tcz_free:
     bgc = BG_FREEHOUR
+  elif tcz_hour.tcz_trainer:
+    # Trainer is free to reserve
+    if tcz_hour.tcz_user.username == TPI_FREE_USER:
+      # Trainer is free to reserve
+      bgc = BG_TPI_FREE
+    else:
+      # Trainer is reserved
+      bgc = BG_TPI
+  elif tcz_hour.tcz_user.is_superuser:
+    bgc = BG_SUPER_USER
   elif tcz_hour.tcz_user.username == lusername:
     # reserved for me
     bgc = BG_OWN
@@ -237,7 +250,10 @@ def make_choice_button(iCourt, iHour, tcz_hour, iUser):
   # set the label = username
   lab = FREE_USER
   if tcz_hour:
-    lab = tcz_hour.tcz_user.username
+    if tcz_hour.tcz_trainer and tcz_hour.tcz_user.username != TPI_FREE_USER:
+      lab = TPI_NAME + '+' + tcz_hour.tcz_user.username
+    else:
+      lab = tcz_hour.tcz_user.username
 
   # set the index and the name of the box
   ind = iCourt * COURT_FAKT + iHour
@@ -286,35 +302,24 @@ def save_choices(i_date, iUser, iUserlogin, i_choices, i_dangermessages):
     # check the date is ok
     l_today = date.today()
     if date_is_wrong(i_date, l_today):
-      i_dangermessages.append(ERR_DATE_INVALID % (
-          i_date.day, i_date.month, i_date.year))
+      i_dangermessages.append(ERR_DATE_INVALID % (i_date.day, i_date.month, i_date.year))
       return STORE_ERROR
 
     # normal users are only allowed to save information till MAX_FUTURE_DAYS
     if not iUser.is_superuser:
       if i_date > l_today + timedelta(days=MAX_FUTURE_DAYS):
-        i_dangermessages.append(ERR_DATE_INVALID % (
-            i_date.day, i_date.month, i_date.year))
+        i_dangermessages.append(ERR_DATE_INVALID % (i_date.day, i_date.month, i_date.year))
         return STORE_ERROR
 
     # create time object for reservation time
-    l_tcztime = datetime(
-        year=i_date.year, month=i_date.month, day=i_date.day, hour=l_h)
+    l_tcztime = datetime(year=i_date.year, month=i_date.month, day=i_date.day, hour=l_h)
 
     # get the selected hour from the database
-    l_reserved = False
     try:
-      tcz_hour = TczHour.objects.filter(
-          tcz_date=i_date, tcz_court=l_c, tcz_hour=l_h)[0]
-      l_reserved = True
-    except:
-      # the hour does not exist in the database - create a default TczHour
-      l_freeuser = CourtUser.objects.get(username=FREE_USER)
-      tcz_hour = TczHour(tcz_date=i_date,
-                         tcz_user=l_freeuser,
-                         tcz_court=l_c,
-                         tcz_hour=l_h,
-                         tcz_free=False)
+      exist_hour = TczHour.objects.filter(tcz_date=i_date, tcz_court=l_c, tcz_hour=l_h)[0]
+    except (IndexError, ObjectDoesNotExist):
+      # the hour does not exist in the database it is free
+      exist_hour = None
 
     # there are no more checks for superusers
     # for normal users there are some restriction:
@@ -322,6 +327,7 @@ def save_choices(i_date, iUser, iUserlogin, i_choices, i_dangermessages):
     # - to have more than one reservation in the future if it is not the current hour
     # - to reserve if somebody was faster and the desired hour is already reserved
     l_freehour = False
+    l_trainer = False
     if not iUser.is_superuser:
       l_acthour, l_nexthour = get_act_hour()
 
@@ -330,17 +336,19 @@ def save_choices(i_date, iUser, iUserlogin, i_choices, i_dangermessages):
         i_dangermessages.append(ERR_HISTORY_CHANGE)
         return STORE_ERROR
 
-      if l_reserved:
+      if exist_hour:
         # the hour is already reserved - check if storno is allowed
-        if tcz_hour.tcz_user == iUser:
+        if exist_hour.tcz_user == iUser:
           # Storno of a reserved hour only allowed until 1h before reservation
-          if ((not tcz_hour.tcz_free) and ((l_tcztime == l_nexthour) or (l_tcztime == l_acthour))):
+          if ((not exist_hour.tcz_free) and ((l_tcztime == l_nexthour) or (l_tcztime == l_acthour))):
             i_dangermessages.append(ERR_ONE_HOUR_STORNO)
             return STORE_ERROR
+        # if the reserved hour is not a trainer hour
         else:
-          # somebody was faster and the hour is already reserved
-          i_dangermessages.append(ERR_ONLY_OWN_USER)
-          return STORE_ERROR
+          if not exist_hour.tcz_trainer:
+            # somebody was faster and the hour is already reserved
+            i_dangermessages.append(ERR_ONLY_OWN_USER)
+            return STORE_ERROR
       else:
         # this is a new hour to reserve
         if l_tcztime == l_acthour:
@@ -355,20 +363,44 @@ def save_choices(i_date, iUser, iUserlogin, i_choices, i_dangermessages):
             return STORE_ERROR
 
     # all checks were successful - store in database
-    # if (tcz_hour.tcz_user == iUser):
-    if l_reserved:
+    if exist_hour:
+      if not iUser.is_superuser:
+        if exist_hour.tcz_trainer:
+          # change the user who changed the reservation
+          exist_hour.tcz_user_change = iUserlogin.username 
+          if exist_hour.tcz_user.username == TPI_FREE_USER:
+            # this is a free trainer hour it will be reserved
+            exist_hour.tcz_user = iUser
+            exist_hour.save()
+            l_result = STORE_RESERVATION
+            send_email(exist_hour, STORE_RESERVATION)
+            return l_result
+          else:
+            # this trainer hour is reserved for me so it will be canceled
+            l_result = STORE_STORNO
+            send_email(exist_hour, STORE_STORNO)
+            exist_hour.tcz_user = CourtUser.objects.get(username=TPI_FREE_USER)
+            exist_hour.save()
+            return l_result
+
       # delete the reservation
-      tcz_hour.tcz_user_change = iUserlogin.username
+      exist_hour.tcz_user_change = iUserlogin.username
       l_result = STORE_STORNO
-      send_email(tcz_hour, STORE_STORNO)
-      tcz_hour.delete()
+      send_email(exist_hour, STORE_STORNO)
+      exist_hour.delete()
     else:
       # save hour for user
-      tcz_hour.tcz_user = iUser
-      tcz_hour.tcz_free = l_freehour
-      tcz_hour.tcz_user_change = iUserlogin.username
-      tcz_hour.save()
+      if iUser.username == TPI_FREE_USER:
+        l_trainer = True
+      new_hour = TczHour(tcz_date=i_date,
+                         tcz_user=iUser,
+                         tcz_court=l_c,
+                         tcz_hour=l_h,
+                         tcz_free=l_freehour,
+                         tcz_trainer=l_trainer,
+                         tcz_user_change=iUserlogin.username)
+      new_hour.save()
       # send email
       l_result = STORE_RESERVATION
-      send_email(tcz_hour, STORE_RESERVATION)
+      send_email(new_hour, STORE_RESERVATION)
   return l_result

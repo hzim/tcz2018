@@ -1,27 +1,38 @@
 {% extends "base.html" %} 
 {% block body_block %}
+
+<div class="message"></div>
 <div class="content">
 
 {% if user.is_superuser %}
-<p>
-  <a class="button_1" href="{% url 'courtstatuscreate' %}">Neue Platzsperre eingeben</a>
-  <br>
-</p>
+<br>
+<form action="{% url 'courtstatuscreate' %}">
+<button class="button_1" type="submit">Neue Platzsperre eingeben</button> 
+</form>
+<br><br>
+<hr>
 {% endif %}
   
 {% if object_list %}
-<h1>Tennisplätze gesperrt:</h1>
 {% for courtstatus in object_list %}
-<p class="userinput">
-  Datum: {{ courtstatus.lock_date|date:'D, d N Y' }} Ursache: {{ courtstatus.lock_comment }} (Nummer: {{ courtstatus.id }})
-  {% if user.is_superuser %}
-    <a class="button_1" href="{% url 'courtstatusdelete' courtstatus.id %}">Sperre aufheben</a>
-  {% endif %}
-</p>
+  <fieldset>
+    <legend>Platzsperre: {{ courtstatus.id }}</legend>
+      {% if user.is_superuser %}
+      <form action="{% url 'courtstatusdelete' courtstatus.id %}">
+        <button class="button_1" type="submit">Sperre aufheben</button> 
+      </form>
+      {% endif %}
+  <span class="userinput">{{ courtstatus.lock_date|date:'D, d N Y' }}: {{ courtstatus.lock_comment }}</span>
+  </fieldset>
 
 {% endfor %}
 {% else %}
-<p class="userinput">Keine Sperren. Plätze sind bespielbar.</p>
+<fieldset>
+  <legend>Platzsperre:</legend>
+  <p class="userinput">Keine Sperren. Plätze sind bespielbar.</p>
+</fieldset>
 {% endif %}
+<br>
 </div>
+
 {% endblock %}

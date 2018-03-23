@@ -1,8 +1,23 @@
-{% extends "base.html" %} {% block body_block %}
+{% extends "base.html" %} 
+{% block body_block %}
+<div class="message"></div>
 <div class="content">
     <h1>TC Zellerndorf Platzeinteilung</h1>
-    <p>Hier können Mitglieder des TC-Zellerndorfs für sich und andere Mitglieder Plätze reservieren und auch wieder freigeben</p>
-    <p>Diese Seite besteht aus dieser Hilfe Seite, dem Anmelde- und dem Reservierungsformular</p>
+    <p>Hier können Mitglieder des TC-Zellerndorfs:
+        <ul>
+        <li>die Platzverfügbarkeit ansehen</li>
+        <li>für sich und andere Mitglieder Plätze reservieren/freigeben</li>
+        <li>Informationen zu Platzsperren ansehen</li>
+        </ul>
+    </p>
+    <p>Diese Seite besteht folgenden Unterseiten:
+        <ul>
+            <li>Hilfeseite</li>
+            <li>Anmeldeseite</li>
+            <li>Reservierungsseite</li>
+            <li>Platzinformationsseite</li>
+        </ul> 
+    </p>
     <hr>
     <h2>Hilfeseite</h2>
     {% load static %}
@@ -39,9 +54,9 @@
     <hr>
     <h2>Platzeinteilung</h2>
     <h3>Anzeige des Datums</h3>
-    <p>Bei den meisten Browsern (firefox, chrome, edge) öffnet sich durch einen Klick in das Datumsfeld ein Datumsdialog. (bei
-        älternen Browsern kann das Datum direkt in das Feld eingegeben werden). Zusätzlich können auch die beiden Pfeiltasten
-        zum Vor und Zurückblättern verwendet werden.
+    <p>Bei den meisten Browsern (firefox, chrome, edge) öffnet sich durch einen Klick in das Datumsfeld ein Datumsdialog
+        (bei älternen Browsern kann das Datum direkt in das Feld eingegeben werden). 
+        Zusätzlich können auch die beiden Pfeiltasten zum Vor und Zurückblättern verwendet werden.
     </p>
     <p>
         <img src="{% static 'img/navbar_datum.png' %}" alt="Aktueller Tag">
@@ -59,14 +74,14 @@
         <img src="{% static 'img/navbar_mitglied.png' %}" alt="Mitglied">
     </p>
     <p>
-        Nach der Auswahl des Datums und des Namens kann eine freie Stunde angeklickt werden und durch Klick auf "Speichern" der Platz
-        reserviert werden
+        Nach der Auswahl des Datums (1) und des Namens (2) kann eine freie Stunde angeklickt (3) werden und durch Klick auf "Speichern" (4) 
+        der Platz reserviert werden
     </p>
     <p>
         <img src="{% static 'img/reservierung_form_frei.png' %}" alt="Stunde reservieren">
     </p>
     <p>
-        Nach erfolgreicher Reservierung wird der Name bei der reservierten Stunde eingetragen
+        Nach erfolgreicher Reservierung wird der Name bei der reservierten Stunde eingetragen (1) und in der Statuszeile die zeitmässig 1te Reservierung angezeigt (2)
     </p>
     <img src="{% static 'img/reservierung_form_belegt.png' %}" alt="Stunde freigeben">
     <p></p>
@@ -74,11 +89,44 @@
         die Freigabe eines Platzes erfolgt durch Auswahl der entsprechenden Stunde und Klick auf "Speichern"
     </p>
     <p>
-        Tritt bei der Reservierung ein Problem auf wird ein entsprechende Fehlertext ausgegeben (zum Beispiel wenn die maximale Anzahl
+        Tritt bei der Reservierung ein Problem auf wird ein entsprechende Fehlertext ausgegeben (1) (zum Beispiel wenn die maximale Anzahl
         der reservierten Stunden schon erreicht war)
     </p>
     <p>
         <img src="{% static 'img/reservierung_form_belegt_error.png' %}" alt="Stunde freigeben">
+    </p>
+    <p>
+        Trainerstunden werden zunächst vom Trainer eingetragen. Sie sind als "Frei TPI" zu erkennen (Bild 1).
+        Nach der Auswahl des Datums und des Namens kann eine freie Stunde angeklickt (1) werden und durch Klick auf "Speichern" (2) 
+        der Trainer reserviert werden. Nach dem "Speichern" wird der TPI + Mitgliedsname angezeigt. 
+        Das Stornieren erfolgt wie bei normalen Stunden durch erneutes Anwählen und Speichern einer reservierten Stunde.
+    </p>
+    <p>
+        Info: Für die Anzahl der Trainerstunden gelten keine Einschränkungen. 
+        Sie haben keinen Einfluss auf normale Reservierungen.
+    </p>
+    <p>
+       <img src="{% static 'img/reservierung_form_belegt_tpi.png' %}" alt="Stunde reservieren">
+    </p>
+    <hr>
+    <h2>Platz Information</h2>
+    <p>
+        Durch Drücken auf "Platz Ok" wird die Platz Informationsseite angewählt. 
+        Hier können berechtigte Mitglieder Platzsperren verhängen.
+        Alle anderen Mitglieder können die Platzsperre(n) nur ansehen.
+        Die Anwahlpunkte (1,2,3) sind nur für die berechtigten Mitglieder vorhanden.
+    <p>
+        <img src="{% static 'img/platz_status_gesperrt.png' %}" alt="Platzinformation">
+    </p>
+    </p>
+    <p>
+        Sind Platzsperren für das aktuell eingestellte Datum vorhanden 
+        ändert sich die die Taste "Platz OK" auf "Platz Info" und in der Statuszeile wird die Ursache angegeben
+        Sind mehrere Informationen für das eingestellte Datum vorhanden wird nur die 1te Information angezeigt.
+        Platzsperren haben keinen Einfluss auf Reservierungen. Es gelten die unten stehenden Einschränkungen.
+    </p>
+    <p>
+        <img src="{% static 'img/platz_status_info.png' %}" alt="Platzinformation">
     </p>
     <hr>
     <h2>Zusammenfassung</h2>
@@ -108,8 +156,7 @@
     <h3>Ausnahmen gibt es für "besondere" Mitglieder z.B. "Damen1", "Herren1", "TCZ"</h3>
     <ul>
         <li>diese haben keine Einschränkung bei der Anzahl der reervierten Stunden</li>
+        <li>können Platzinformationen eingeben und löschen</li>
     </ul>
-</div>
-<div class="message">
 </div>
 {% endblock %}

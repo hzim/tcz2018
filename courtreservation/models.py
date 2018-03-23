@@ -19,14 +19,17 @@ class TczHour(models.Model):
   tcz_court = models.IntegerField()
   tcz_hour = models.IntegerField(default=0)
   tcz_free = models.BooleanField(default=False)
+  tcz_trainer = models.BooleanField(default=False)
 
   def __str__(self):
     try:
-      return "date=%s court=%d hour=%d user=%s user_change=%s" % \
+      return "date=%s court=%d hour=%d user=%s free=%s trainer=%s user_change=%s" % \
              (self.tcz_date.ctime(),
               self.tcz_court,
               self.tcz_hour,
               self.tcz_user,
+              self.tcz_free,
+              self.tcz_trainer,
               self.tcz_user_change)
     except:
       return "date=None court=%d hour=%d user=%s" % \

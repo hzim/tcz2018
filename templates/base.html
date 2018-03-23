@@ -15,14 +15,14 @@
 
 <body>
   <div class="wrapper">
-    <header class="header">
+    <header class="header header_warn">
       <div class="header_today">
         <a href="{% url 'courtreservation' year='0000' month='00' day='00' %}">Heute</a>
       </div>
       {% if weekday %}
       {% if courtstatus %}
       <div class="header_lock">
-          <a class="courtstatusnok" href="{% url 'courtstatusindex' %}">Platzsperre</a>
+          <a class="courtstatusnok" href="{% url 'courtstatusindex' %}">Platz Info</a>
       </div>
       {% else %}
       <div class="header_lock">
