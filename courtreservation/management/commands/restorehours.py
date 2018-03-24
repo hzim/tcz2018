@@ -27,7 +27,8 @@ class Command(BaseCommand):
           tcz_court=int(strip_str[2]),
           tcz_hour=int(strip_str[3]),
           tcz_free=False if (strip_str[4] == 'False') else True,
-          tcz_user_change=CourtUser.objects.get(username=strip_str[5])
+          tcz_trainer=False if (strip_str[5] == 'False') else True,
+          tcz_user_change=CourtUser.objects.get(username=strip_str[6])
       )
 
       tcz_hour.save()

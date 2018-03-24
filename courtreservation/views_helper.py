@@ -1,3 +1,4 @@
+""" helper fucntions for view """
 from datetime import date, datetime, timedelta
 import locale
 import logging
@@ -30,10 +31,11 @@ from .models import TczHour
 def date_is_wrong(date_to_show, date_today):
   """ check plausibility of date
   """
-  if ((date_to_show.year != date_today.year) or
-          (date_to_show.month < MIN_MONTH) or
-      (date_to_show.month > MAX_MONTH)
-      ):
+  if date_to_show.year != date_today.year:
+    return True
+  if date_to_show.month < MIN_MONTH:
+    return True
+  if date_to_show.month > MAX_MONTH:
     return True
   return False
 
@@ -83,8 +85,7 @@ def send_email(tcz_hour, email_action):
 
 
 class SavedDate():
-  """ structure for date
-  """
+  """ structure for date"""
 
   def __init__(self, i_date):
     self.date = i_date
@@ -115,9 +116,7 @@ def build_next_reservation(tcz_hour, tcz_user):
                        tcz_hour.tcz_date.year,
                        tcz_hour.tcz_hour,
                        tcz_hour.tcz_court,
-                       tcz_user.username
-                       )
-                      ]
+                       tcz_user.username)]
   return next_reservation
 
 
@@ -134,15 +133,14 @@ def get_next_reservation(iUser):
       tcztime = datetime(year=tcz_hour.tcz_date.year,
                          month=tcz_hour.tcz_date.month,
                          day=tcz_hour.tcz_date.day,
-                         hour=tcz_hour.tcz_hour
-                         )
+                         hour=tcz_hour.tcz_hour)
       if ((tcztime > now) and (not tcz_hour.tcz_free)):
         # print(tcz_hour)
         return tcz_hour
       else:
         pass
     return None
-  except:
+  except ObjectDoesNotExist:
     return None
 
 
@@ -197,7 +195,7 @@ def user_has_reservation(iUser):
         if l_hourcnt == MAX_RESERVATION_DAYS:
           return l_hourcnt
     return None
-  except:
+  except ObjectDoesNotExist:
     return None
 
 
@@ -367,7 +365,7 @@ def save_choices(i_date, iUser, iUserlogin, i_choices, i_dangermessages):
       if not iUser.is_superuser:
         if exist_hour.tcz_trainer:
           # change the user who changed the reservation
-          exist_hour.tcz_user_change = iUserlogin.username 
+          exist_hour.tcz_user_change = iUserlogin.username
           if exist_hour.tcz_user.username == TPI_FREE_USER:
             # this is a free trainer hour it will be reserved
             exist_hour.tcz_user = iUser
@@ -375,13 +373,12 @@ def save_choices(i_date, iUser, iUserlogin, i_choices, i_dangermessages):
             l_result = STORE_RESERVATION
             send_email(exist_hour, STORE_RESERVATION)
             return l_result
-          else:
-            # this trainer hour is reserved for me so it will be canceled
-            l_result = STORE_STORNO
-            send_email(exist_hour, STORE_STORNO)
-            exist_hour.tcz_user = CourtUser.objects.get(username=TPI_FREE_USER)
-            exist_hour.save()
-            return l_result
+          # this trainer hour is reserved for me so it will be canceled
+          l_result = STORE_STORNO
+          send_email(exist_hour, STORE_STORNO)
+          exist_hour.tcz_user = CourtUser.objects.get(username=TPI_FREE_USER)
+          exist_hour.save()
+          return l_result
 
       # delete the reservation
       exist_hour.tcz_user_change = iUserlogin.username

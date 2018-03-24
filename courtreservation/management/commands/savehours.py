@@ -11,7 +11,7 @@ class Command(BaseCommand):
   def handle(self, *args, **options):
     f = open('hour_2018.csv', mode='w', encoding='iso8859-1')
     # print headline
-    print("Datum ; Mitglied ; Platz ; Stunde ; Freie Stunde ; Reservierer ;", file=f)
+    print("Datum ; Mitglied ; Platz ; Stunde ; Freie Stunde ; Trainer ; Reservierer ;", file=f)
     tczhours = TczHour.objects.all()
     for hour in tczhours:
       print("%02d.%02d.%4d" % (hour.tcz_date.day, hour.tcz_date.month, hour.tcz_date.year), ';',
@@ -19,5 +19,6 @@ class Command(BaseCommand):
             hour.tcz_court, ';',
             hour.tcz_hour, ';',
             hour.tcz_free, ';',
-            hour.tcz_user_change, file=f
-            )
+            hour.tcz_trainer, ';',
+            hour.tcz_user_change,
+            file=f)

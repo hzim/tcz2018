@@ -3,7 +3,6 @@ import locale
 import os
 
 from django.views.generic import CreateView, ListView, DeleteView
-from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 

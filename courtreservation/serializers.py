@@ -16,8 +16,7 @@ class TczHourSerializer(serializers.ModelSerializer):
               'tcz_user_change',
               'tcz_court',
               'tcz_hour',
-              'tcz_free',
-              )
+              'tcz_free')
 
   def create(self, validated_data):
     tcz_hour = TczHour(tcz_date=validated_data['tcz_date'],

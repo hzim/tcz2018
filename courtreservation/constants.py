@@ -1,4 +1,4 @@
-# constants for views
+""" constants for views """
 NUM_COURTS = 6
 HOURS_PER_DAY = 14
 HOUR_START = 8
@@ -71,4 +71,3 @@ EMAIL_ADDRESS = "zellerndorfertc@gmail.com"
 EMAIL_SUBJECT = "Tennisplatz Reservierung"
 EMAIL_BODY_TEMPLATE = "Tennisplatz %s: von %s für %s, Platz=%d, Zeit=%s, %02d Uhr"
 EMAIL_ACTIONTEXT = ["", "Stornierung", "Reservierung"]
-

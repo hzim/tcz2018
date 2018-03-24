@@ -19,12 +19,12 @@ class Command(BaseCommand):
       if firstname == '':
         # if no firstname - keep the name like it is
         return lastname
-      else:        
-        l_lastname_lower = lastname.lower()
-        l_firstname_lower = firstname.lower()
-        l_lastname = l_lastname_lower[0:1].upper() + l_lastname_lower[1:]
-        l_firstname = l_firstname_lower[0:1].upper() + l_firstname_lower[1:]
-        return l_lastname + ' ' + l_firstname
+
+      l_lastname_lower = lastname.lower()
+      l_firstname_lower = firstname.lower()
+      l_lastname = l_lastname_lower[0:1].upper() + l_lastname_lower[1:]
+      l_firstname = l_firstname_lower[0:1].upper() + l_firstname_lower[1:]
+      return l_lastname + ' ' + l_firstname
 
     f = open('user_import_2018.csv', mode='r', encoding='iso8859-1')
     # skip headline
