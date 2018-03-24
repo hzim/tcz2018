@@ -93,9 +93,10 @@ def render_form(request, sel_user, date_to_show, danger_messages):
   court_status = getCourtStatus(date_to_show)
   success_messages = []
   info_messages = []
+  lock_messages = []
 
   if court_status:
-    danger_messages = [court_status]
+    lock_messages = [court_status]
   if request.user.is_authenticated:
     tcz_hour = get_next_reservation(sel_user)
     if tcz_hour is None:
@@ -118,6 +119,7 @@ def render_form(request, sel_user, date_to_show, danger_messages):
                  'weekday': week_day,
                  'savedDate': saved_date,
                  'choiceTable': choice_table,
+                 'lockMessages': lock_messages,
                  'dangerMessages': danger_messages,
                  'successMessages': success_messages,
                  'infoMessages': info_messages,

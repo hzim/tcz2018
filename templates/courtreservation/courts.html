@@ -19,7 +19,17 @@
 
 {% if dangerMessages %} 
 {% for message in dangerMessages %}
+{% load static %}
 <div class="message message-error">
+  <strong>Achtung: </strong> {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+
+{% if lockMessages %} 
+{% for message in lockMessages %}
+{% load static %}
+<div class="message message-lock" style="background-repeat: repeat-x; background-image:url({%static 'img/regen_0005.gif' %});">
   <strong>Achtung: </strong> {{ message }}
 </div>
 {% endfor %}
