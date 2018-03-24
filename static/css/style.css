@@ -54,7 +54,7 @@ body{
 .header {
     display: grid;
     grid-area: header;
-    grid-gap: 0.2em;
+    grid-gap: 0.1em;
     grid-template-areas:
       "header_today"
       "header_lock"
@@ -83,7 +83,7 @@ body{
 /* grid layout default*/
 .wrapper{
     display: grid;
-    grid-gap: 0.2em;
+    grid-gap: 0.1em;
     grid-template-areas:
       "header"
       "message"
@@ -95,7 +95,7 @@ body{
  * header for normal computer displays
  * smaller displays will get default .header layout - see above
 */
-@media only screen and (min-width: 1500px)  {
+@media only screen and (min-width: 1560px)  {
     .header {
         grid-template-columns: 1fr 2fr 3fr 2fr 1fr;
         grid-template-areas:
@@ -104,15 +104,15 @@ body{
     }
 }
 
-@media only screen and (min-width: 750px) and (max-width: 1499px) {
+@media only screen and (min-width: 750px) and (max-width: 1559px) {
     .header {
         grid-template-columns: 1fr 3fr;
         grid-template-areas:
-          "header_today        header_help_link"      
-          "header_lock         header_login_link" 
-          "header_date_label   header_date"       
-          "header_user_label   header_user"       
-          "header_login_label  header_login_name" 
+          "header_today        header_help_link"
+          "header_lock         header_login_link"
+          "header_date_label   header_date"
+          "header_user_label   header_user"
+          "header_login_label  header_login_name"
     }
 }
 /* styles for classes */
@@ -175,8 +175,8 @@ body{
 }
 
 .navicon{
-    height: 42px;
-    width: 42px;
+    height: 40px;
+    width: 40px;
     padding: 0%;
     border: 0;
 }
@@ -230,7 +230,7 @@ form{
 }
 
 header{
-    background: #35424a;    
+    background: #35424a;
     color: #e4e4e4;
     padding-top: 5px;
     min-height: 70px;
@@ -253,17 +253,18 @@ header nav{
     margin-top: 10px;
 }
 
-hr { 
-    width: 95%; 
-    height: 5px; 
+hr {
+    width: 95%;
+    height: 5px;
     margin: 0 auto;
     background: #e8491d;;
 }
 
 input[type="date"]{
-    padding: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
     height: 28px;
-    width: 200px;
+    width: 245px;
     font-size: 28px;
     vertical-align: top;
 }
