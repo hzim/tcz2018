@@ -12,7 +12,7 @@ class Command(BaseCommand):
     f = open('hour_2018.csv', mode='w', encoding='iso8859-1')
     # print headline
     print("Datum ; Mitglied ; Platz ; Stunde ; Freie Stunde ; Trainer ; Reservierer ;", file=f)
-    tczhours = TczHour.objects.all()
+    tczhours = TczHour.objects.all().order_by('tcz_date', 'tcz_court', 'tcz_hour')
     for hour in tczhours:
       print("%02d.%02d.%4d" % (hour.tcz_date.day, hour.tcz_date.month, hour.tcz_date.year), ';',
             hour.tcz_user, ';',
