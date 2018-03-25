@@ -10,3 +10,8 @@ class CourtUserManager(UserManager):
 class CourtUser(AbstractUser):
   """ inherit from django """
   objects = CourtUserManager()
+
+  class Meta:
+    verbose_name = 'TCZ Mitglied'
+    verbose_name_plural = 'TCZ Mitglieder'
+    

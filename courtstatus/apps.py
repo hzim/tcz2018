@@ -3,4 +3,5 @@ from django.apps import AppConfig
 
 
 class LockcourtConfig(AppConfig):
-    name = 'lockcourt'
+  name = 'courtstatus'
+  verbose_name = 'Tennisplatz Infos'

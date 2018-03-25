@@ -10,7 +10,8 @@ class TczHourAdmin(admin.ModelAdmin):
             'tcz_hour', 'tcz_user_change', 'tcz_free', 'tcz_trainer')
   list_display = ('tcz_date', 'tcz_user', 'tcz_court',
                   'tcz_hour', 'tcz_user_change', 'tcz_free', 'tcz_trainer')
-  # admin_order_field = 'tcz_date'
+  list_filter = ('tcz_date', 'tcz_user')
+  admin_order_field = 'tcz_date'
 
 
 admin.site.register(TczHour, TczHourAdmin)

@@ -8,6 +8,10 @@ class TczCourtStatus(models.Model):
   lock_date = models.DateField('Datum')
   lock_comment = models.CharField('Kommentar', max_length=100, default='Plätze nicht bespielbar')
 
+  class Meta:
+    verbose_name = 'Tennisplatz Information'
+    verbose_name_plural = 'Tennisplatz Informationen'
+
 
 class TczCourtStatusForm(forms.ModelForm):
   class Meta:
