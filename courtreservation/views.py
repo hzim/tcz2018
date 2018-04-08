@@ -65,6 +65,7 @@ class TczHourViewSet(viewsets.ModelViewSet):
     serializer = self.get_serializer(from_hours, many=True)
     return Response(serializer.data)
 
+
 def redirect_to_date(request, to_date):
   """ redirects to render the updated form
   """

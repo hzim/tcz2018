@@ -341,7 +341,7 @@ def save_choices(i_date, iUser, iUserlogin, i_choices, i_dangermessages):
             return STORE_ERROR
         # if the reserved hour is not a trainer hour
         else:
-          if exist_hour.tcz_trainer: 
+          if exist_hour.tcz_trainer:
             if exist_hour.tcz_user != iUser and exist_hour.tcz_user != lTrainer:
               # somebody was faster and the hour is already reserved
               i_dangermessages.append(ERR_ONLY_OWN_USER)

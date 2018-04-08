@@ -1,9 +1,9 @@
 """ serializer for rest framework """
 
 from rest_framework import serializers
+from courtuser.models import CourtUser
 from .models import TczHour
 from .views_helper import user_has_reservation
-from courtuser.models import CourtUser
 
 
 class TczHourSerializer(serializers.ModelSerializer):
