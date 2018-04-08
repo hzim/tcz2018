@@ -39,7 +39,7 @@ class ViewCreate(CreateView):
 
   def form_valid(self, form):
     # check if the user is allowed to create
-    if not self.request.user.is_superuser:
+    if not self.request.user.isSpecial:
       return HttpResponseRedirect(reverse('courtstatusindex'))
     model = form.save(commit=False)
     model.save()

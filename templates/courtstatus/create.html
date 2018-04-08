@@ -2,7 +2,7 @@
 {% block body_block %}
 <div class="message"></div>
 <div class="content">
-  {% if user.is_superuser %}
+  {% if user.isSpecial %}
     <form action="" method="post">
       {% csrf_token %}
       <fieldset>

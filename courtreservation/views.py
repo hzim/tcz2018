@@ -44,8 +44,7 @@ class TczHourViewSet(viewsets.ModelViewSet):
   def fromnow(self, request, format=None):
     """ returns the reserved hours from l_today on
     """
-    from_hours = TczHour.objects.filter(
-        tcz_date__gte=date.today()).order_by('tcz_date')
+    from_hours = TczHour.objects.filter(tcz_date__gte=date.today()).order_by('tcz_date')
     page = self.paginate_queryset(from_hours)
     if page is not None:
       serializer = self.get_serializer(page, many=True)
@@ -62,11 +61,9 @@ class TczHourViewSet(viewsets.ModelViewSet):
     ldate = date(year=int(request.query_params['year']),
                  month=int(request.query_params['month']),
                  day=int(request.query_params['day']))
-    from_hours = TczHour.objects.filter(
-        tcz_date=ldate).order_by('tcz_date')
+    from_hours = TczHour.objects.filter(tcz_date=ldate).order_by('tcz_date')
     serializer = self.get_serializer(from_hours, many=True)
     return Response(serializer.data)
-
 
 def redirect_to_date(request, to_date):
   """ redirects to render the updated form
@@ -192,7 +189,7 @@ def courtreservation(request, year='0', month='0', day='0'):
         month = int(setdate[1])
         year = int(setdate[0])
         new_date = date(year, month, day)
-        if not request.user.is_superuser:
+        if not request.user.isSpecial:
           if date_is_wrong(new_date, l_today):
             raise ValueError('MAX_HISTORY_DAYS')
         # set the new date

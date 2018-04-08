@@ -35,14 +35,14 @@ def get_user_list(request, sel_user):
       sel_user = request.user
 
     own_user_name = sel_user.username
-    # superusers see all superusers, normal users only normal users
+    # restricted users see all restricted users, special users all special users
     allUsers = CourtUser.objects.all()
     for user in allUsers:
-      if request.user.is_superuser:
-        if user.is_superuser:
+      if request.user.isSpecial:
+        if user.isSpecial and not user.is_superuser:
           selectedUser.append(user.username)
       else:
-        if not user.is_superuser and user.username != TENNIS_PLATZ_USER:
+        if not user.isSpecial:
           selectedUser.append(user.username)
   # sort by names and insert current user as first selection entry
   selectedUser.sort()

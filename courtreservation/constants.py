@@ -56,7 +56,7 @@ ERR_HISTORY_CHANGE = "Änderung in der Vergangenheit nicht erlaubt"
 ERR_NO_MITGLIED = "Mitglied nicht in Datenbank"
 ERR_DATE_INVALID = "Datum %02d.%02d.%04d nicht zulässig"
 ERR_DATE_INVALID_STR = "Datum %s.%s.%s nicht zulässig"
-ERR_ONLY_OWN_USER = "Platz ist leider schon schon reserviert"
+ERR_ONLY_OWN_USER = "Platz ist leider schon reserviert"
 ERR_NO_RESERVATION = 'Diese Stunde kann leider nicht mehr für %s reserviert werden'
 ERR_OTHER_USER = 'Stunde bereits von %s reserviert'
 

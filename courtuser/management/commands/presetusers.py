@@ -50,7 +50,7 @@ class Command(BaseCommand):
       if strip_str[3] == 'C':
         lastname = strip_str[0]
         firstname = strip_str[1]
-        email = strip_str[2]
+        emailAdr = strip_str[2]
         username = make_user_name(lastname, firstname)
         # check for unique user names
         if username in allUsers:
@@ -59,22 +59,32 @@ class Command(BaseCommand):
           allUsers.add(username)
         # check if user already exists
         isNewUser = not CourtUser.objects.filter(username=username).exists()
-        lSuperUser = True if strip_str[4] == 'S' else False
+        lIsSpecial = True if strip_str[4] == 'X' else False
+        lTrainer = True if strip_str[5] == 'X' else False
+        lSuperUser = True if strip_str[6] == 'X' else False
+        lSendEmail = True if strip_str[7] == 'X' else False
+        lPassword = 'tc4zellerndorf' if lIsSpecial else 'tczellerndorf'
         if isNewUser:
           try:
             if lSuperUser:
               user = CourtUser.objects.create_superuser(username,
-                                                        email=email,
-                                                        password='tc4zellerndorf',
+                                                        email=emailAdr,
+                                                        password=lPassword,
                                                         first_name=firstname,
-                                                        last_name=lastname)
+                                                        last_name=lastname,
+                                                        sendEmail=lSendEmail,
+                                                        isSpecial=lIsSpecial,
+                                                        isFreeTrainer=lTrainer)
               self.stdout.write(self.style.SUCCESS('superuser created "%s"' % username))
             else:
               user = CourtUser.objects.create_user(username,
-                                                   email=email,
-                                                   password='tczellerndorf',
+                                                   email=emailAdr,
+                                                   password=lPassword,
                                                    first_name=firstname,
-                                                   last_name=lastname)
+                                                   last_name=lastname,
+                                                   sendEmail=lSendEmail,
+                                                   isSpecial=lIsSpecial,
+                                                   isFreeTrainer=lTrainer)
               self.stdout.write(self.style.SUCCESS('user created "%s"' % username))
           except ValueError:
             self.stdout.write(self.style.SUCCESS('error "%s"' % exc_info()[0]))

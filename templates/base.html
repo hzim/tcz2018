@@ -82,7 +82,7 @@
       <div class="header_login_label">angemeldet als:</div>
       <div class="header_login_name">{{ user.get_username }}</div>
       <div class="header_login_link">
-        <a href="{% url 'auth_logout' %}">
+        <a href="{% url 'user_logout' %}">
           Abmelden
           <span class="icon">
             <img src="{% static 'img/exit.png' %}">
@@ -93,7 +93,7 @@
       <div class="header_login_label"></div>
       <div class="header_login_name"></div>
       <div class="header_login_link">
-        <a href="{% url 'auth_login' %}">
+        <a href="{% url 'user_login' %}">
           Anmelden
           <span class="icon">
             <img src="{% static 'img/enter.png' %}">

@@ -4,7 +4,7 @@
 <div class="message"></div>
 <div class="content">
 
-{% if user.is_superuser %}
+{% if user.isSpecial %}
 <br>
 <form action="{% url 'courtstatuscreate' %}">
 <button class="button_1" type="submit">Neue Platzsperre eingeben</button> 
@@ -17,7 +17,7 @@
 {% for courtstatus in object_list %}
   <fieldset>
     <legend>Platzsperre: {{ courtstatus.id }}</legend>
-      {% if user.is_superuser %}
+      {% if user.isSpecial %}
       <form action="{% url 'courtstatusdelete' courtstatus.id %}">
         <button class="button_1" type="submit">Sperre aufheben</button> 
       </form>

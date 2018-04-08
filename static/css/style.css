@@ -278,7 +278,7 @@ p label{
     width: 300px;
     margin: 10px;
 }
-#id_lock_comment, #id_username, #id_password{
+#id_lock_comment, #id_username, #id_password, #id_email{
     font-size: 28px;
     margin: 0px;
     width: 600px;

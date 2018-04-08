@@ -4,7 +4,7 @@
 <div class="message"></div>
 <div class="content">
   <br>
-  {% if user.is_superuser %}
+  {% if user.isSpecial %}
   <form method="post">
     {% csrf_token %}
     <button class="button_1">Platzsperre aufheben bestätigen</button>

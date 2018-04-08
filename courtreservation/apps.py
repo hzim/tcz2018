@@ -1,3 +1,4 @@
+""" app configuration - used in admin page """
 from django.apps import AppConfig
 
 

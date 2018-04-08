@@ -25,7 +25,7 @@ SECRET_KEY = 'eeoonl&((nqx$ll@qdw64lh+%pm9)fkcwpb0ct56qi^h11%$lr'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['tczellerndorf.pythonanywhere.com']
 
 
 # Application definition
@@ -82,7 +82,7 @@ WSGI_APPLICATION = 'tcz2018.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': os.path.join(BASE_DIR, 'tcz2018.sqlite3'),
     }
 }
 
@@ -136,16 +136,17 @@ STATICFILES_DIRS = [
 LOGIN_REDIRECT_URL = '/0000/00/00/'
 
 # log email to console
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+#DEFAULT_FROM_EMAIL = 'zellerndorfertc@gmail.com'
 
 # email using gmail
-#EMAIL_HOST = 'smtp.gmail.com'
-#EMAIL_PORT = 587
-#EMAIL_HOST_USER = 'xxx@gmail.com'
-#EMAIL_HOST_PASSWORD = 'xxx'
-#EMAIL_USE_TLS = True
-#DEFAULT_FROM_EMAIL = 'zellerndorfertc@gmail.com'
-#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'zellerndorfertc@gmail.com'
+EMAIL_HOST_PASSWORD = 'tczellerndorf@1975'
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'zellerndorfertc@gmail.com'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 LOGGING = {
     'version': 1,

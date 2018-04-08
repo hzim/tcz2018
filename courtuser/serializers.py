@@ -11,4 +11,4 @@ class UserSerializer(serializers.ModelSerializer):
     """ meta class """
     model = CourtUser
     # fields = '__all__'
-    fields = ('id', 'username', 'is_staff', 'first_name', 'last_name')
+    fields = ('id', 'username', 'sendEmail', 'is_superuser', 'isSpecial', 'isFreeTrainer')
