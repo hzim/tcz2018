@@ -206,7 +206,7 @@ def make_choice_button(iCourt, iHour, tcz_hour, iUser):
   box = ''
   dis = ''
   lusername = iUser.username
-  if iUser.isSpecial:
+  if not iUser.is_anonymous and iUser.isSpecial:
     # superuser are allowed to change everything
     box = 'checkbox'
   else:
