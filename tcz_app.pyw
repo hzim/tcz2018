@@ -311,6 +311,7 @@ class ReservationApp(tkinter.Frame):
                )
           # print(stmt)
           self.dbCursor.execute(stmt)
+        self.dbConn.commit()        
 
     # fill the name lists for separate for special and normal users
     self.dbCursor.execute('SELECT * FROM COURTUSER ORDER BY username')
@@ -345,6 +346,7 @@ class ReservationApp(tkinter.Frame):
              )
         # print(stmt)
         self.dbCursor.execute(stmt)
+      self.dbConn.commit()
       return True
     # server problem
     return False
