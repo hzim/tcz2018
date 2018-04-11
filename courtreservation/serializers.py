@@ -22,9 +22,10 @@ class TczHourSerializer(serializers.ModelSerializer):
                        tcz_hour=validated_data['tcz_hour'],
                        tcz_free=validated_data['tcz_free'],
                        tcz_trainer=validated_data['tcz_trainer'])
-    if user_has_reservation(validated_data['tcz_user']):
-      # user already run out of free reservation hours
-      return None
+    if not validated_data['tcz_free']:
+      if user_has_reservation(validated_data['tcz_user']):
+        # user already run out of free reservation hours
+        return None
     tcz_hour.save()
     return tcz_hour
 

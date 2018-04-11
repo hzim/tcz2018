@@ -1,5 +1,6 @@
 #!/usr/local/bin/python3
 
+import argparse
 from datetime import date, timedelta, datetime
 from tkinter import ttk
 import tkinter
@@ -7,7 +8,6 @@ import tkinter.messagebox
 import math
 import locale
 import os
-import sys
 from threading import Timer
 import sqlite3
 from sqlite3 import Error
@@ -31,34 +31,18 @@ from courtreservation.constants import BG_FREE,\
     FREE_MINUTE,\
     HOURS_PER_DAY,\
     MAX_FUTURE_DAYS,\
+    MAX_RESERVATION_DAYS,\
     NUM_COURTS,\
     HOUR_START,\
     FREE_USER,\
     ERR_OTHER_USER,\
     ERR_DATE_INVALID,\
+    ERR_HOUR_PER_USER,\
     ERR_NO_RESERVATION,\
     ERR_HISTORY_CHANGE
 
 # to allow access to the courts imports and DJANGO environment for database
 # sys.path.append('./')
-
-
-# from django.contrib.auth.models import User
-
-# imports to use Django REST framework
-URL_GETUSERS = 'http://127.0.0.1:8000/tczusers.json/'
-URL_GETHOURS = 'http://127.0.0.1:8000/tczhours.json/'
-URL_PUTHOURS = 'http://127.0.0.1:8000/tczhours/%d/'
-URL_GETHOURS_DATE = 'http://127.0.0.1:8000/tczhours/atdate.json/?year=%d&month=%d&day=%d'
-URL_GETHOURS_FROMNOW = 'http://127.0.0.1:8000/tczhours/fromnow.json/'
-URL_POSTHOUR = 'http://127.0.0.1:8000/tczhours/%s/'
-
-URL_GETUSERS = 'https://tczellerndorf.pythonanywhere.com/tczusers.json/'
-URL_GETHOURS = 'https://tczellerndorf.pythonanywhere.com/tczhours.json/'
-URL_PUTHOURS = 'https://tczellerndorf.pythonanywhere.com/tczhours/%d/'
-URL_GETHOURS_DATE = 'https://tczellerndorf.pythonanywhere.com/tczhours/atdate.json/?year=%d&month=%d&day=%d'
-URL_GETHOURS_FROMNOW = 'https://tczellerndorf.pythonanywhere.com/tczhours/fromnow.json/'
-URL_POSTHOUR = 'https://tczellerndorf.pythonanywhere.com/tczhours/%s/'
 
 # token for TCZ
 HTTP_HEADER = {
@@ -112,7 +96,7 @@ def sqlDatabaseInit():
   """ connect to database and create tables
   """
   dbFile = 'tcz_app.sqlite3'
-  createCourtUser = """ CREATE TABLE if not exists COURTUSER (
+  createCourtUser = """ CREATE TABLE IF NOT EXISTS COURTUSER (
                           id INTEGER PRIMARY KEY,
                           username TEXT,
                           sendEmail INTEGER,
@@ -122,7 +106,7 @@ def sqlDatabaseInit():
                         )
                     """
 
-  createCourtHour = """ CREATE TABLE if not exists COURTHOUR (
+  createCourtHour = """ CREATE TABLE IF NOT EXISTS COURTHOUR (
                           id INTEGER PRIMARY KEY,
                           tcz_date TEXT,
                           tcz_user INTEGER,
@@ -169,23 +153,23 @@ def name_to_text(iTczUser, iTczHour):
   return iTczUser[USER_USERNAME]
 
 
-def user_has_reservation(i_user):
+def user_has_reservation(iUser):
   """ for a normal user only 2 hours in the future are allowed
   """
-  try:
-    #datenow = date.today()
-    #lHourCount = 0
-    # for l_tczhour in TczHour.objects.filter(tcz_user=i_user)
-    #                              .filter(tcz_date__gte=datenow)
-    #                              .order_by('tcz_date','tcz_hour'):
-    #  if (not l_tczhour.tcz_free) :
-    # found an already reserved hour for this week
-    #    lHourCount += 1
-    #    if (lHourCount == MAX_RESERVATION_DAYS):
-    #      return(lHourCount)
-    return None
-  except:
-    return None
+  datenow = get_date_name(date.today())
+  stmt = "SELECT * from COURTHOUR where tcz_date>='%s' AND tcz_user=%d" % (datenow, iUser[USER_ID])
+  # print(stmt)
+  MY_APP.app.dbCursor.execute(stmt)
+  lMyHours = MY_APP.app.dbCursor.fetchall()
+
+  # dont count free hours
+  lHourCount = 0
+  for lHour in lMyHours:
+    if not lHour[HOUR_FREE]:
+      lHourCount += 1
+      if lHourCount == MAX_RESERVATION_DAYS:
+        return lHourCount
+  return None
 
 
 def now_string():
@@ -250,8 +234,10 @@ class ReservationApp(tkinter.Frame):
     self.current_date = date.today()
     self.current_date_name = get_date_name(self.current_date)
     self.do_date_today(update=False)
-
-    self.get_all_hours()
+    if GET_HOUR_FROM_SERVER:
+      self.get_all_hours()
+    else:
+      self.get_fromnow_hours()
     # start update timer_all
     self.timer = Timer(30.0, self.update_fromnow_hours)
     self.timer.start()
@@ -267,12 +253,6 @@ class ReservationApp(tkinter.Frame):
   def getUserIdTrainer(self):
     self.dbCursor.execute("SELECT id from COURTUSER where isFreeTrainer=1")
     return self.dbCursor.fetchone()[0]
-
-  def is_normal_user(self, iUser):
-    if iUser[USER_ISSPECIAL]:
-      return False
-    else:
-      return True
 
   def request_from_server(self, request, errortext):
     """ request data from server
@@ -311,35 +291,34 @@ class ReservationApp(tkinter.Frame):
     self.user_names_norm = []
     self.user_names_special = []
 
-    req = urllib.request.Request(URL_GETUSERS, data=None, headers=HTTP_HEADER)
-    if self.request_from_server(req, 'Mitgliederliste wird lokal gelesen'):
-      # everything is fine
-      result = json.loads(self.response.read())
-      # print(result)
-      # fields = 'id', 'username', 'is_superuser', 'isSpecial', 'isFreeTrainer'
-      self.dbCursor.execute('DELETE FROM COURTUSER')
-      for item in result:
-        # update local database
-        stmt = "INSERT INTO COURTUSER VALUES(%d, '%s', %d, %d, %d, %d)" % \
-            (item['id'],
-             item['username'],
-             item['sendEmail'],
-             item['is_superuser'],
-             item['isSpecial'],
-             item['isFreeTrainer']
-             )
-        # print(stmt)
-        self.dbCursor.execute(stmt)
-    else:
-      # read Mitglieder from local database
-      pass
+    if GET_USER_FROM_SERVER:
+      req = urllib.request.Request(URL_GETUSERS, data=None, headers=HTTP_HEADER)
+      if self.request_from_server(req, 'Mitgliederliste wird lokal gelesen'):
+        # everything is fine
+        result = json.loads(self.response.read())
+        # print(result)
+        # fields = 'id', 'username', 'is_superuser', 'isSpecial', 'isFreeTrainer'
+        self.dbCursor.execute('DELETE FROM COURTUSER')
+        for item in result:
+          # update local database
+          stmt = "INSERT INTO COURTUSER VALUES(%d, '%s', %d, %d, %d, %d)" % \
+              (item['id'],
+               item['username'],
+               item['sendEmail'],
+               item['is_superuser'],
+               item['isSpecial'],
+               item['isFreeTrainer']
+               )
+          # print(stmt)
+          self.dbCursor.execute(stmt)
 
-    # fill the names to lists for fast
+    # fill the name lists for separate for special and normal users
     self.dbCursor.execute('SELECT * FROM COURTUSER ORDER BY username')
     allRows = self.dbCursor.fetchall()
     for lRow in allRows:
       if lRow[USER_ISSPECIAL]:
-        self.user_names_special.append(lRow[USER_USERNAME])
+        if not lRow[USER_IS_SUPERUSER]:
+          self.user_names_special.append(lRow[USER_USERNAME])
       else:
         self.user_names_norm.append(lRow[USER_USERNAME])
 
@@ -417,7 +396,7 @@ class ReservationApp(tkinter.Frame):
 
   def updateDateDenied(self, l_tcztime):
     """ normal users are not allowed to change the past """
-    if self.is_normal_user(self.courtUser):
+    if not self.courtUser[USER_ISSPECIAL]:
       l_acthour = get_act_hour()
       if l_tcztime < l_acthour:
         tkinter.messagebox.showerror('Fehler', ERR_HISTORY_CHANGE)
@@ -431,8 +410,7 @@ class ReservationApp(tkinter.Frame):
     return False
 
   def isFreeHour(self, l_tcztime):
-    l_normaluser = self.is_normal_user(self.courtUser)
-    if l_normaluser:
+    if not self.courtUser[USER_ISSPECIAL]:
       l_acthour = get_act_hour()
       if l_tcztime == l_acthour:
         # mark spezial reservations for current hour and next hour after minute 45
@@ -458,7 +436,12 @@ class ReservationApp(tkinter.Frame):
     """ reserve one hour
     """
     l_freehour = self.isFreeHour(l_tcztime)
-    l_trainer = False
+    l_trainer = self.courtUser[USER_ISFREETRAINER]
+
+    if not l_freehour:
+      if user_has_reservation(self.courtUser):
+        tkinter.messagebox.showerror('Fehler', ERR_HOUR_PER_USER)
+        return
 
     print('Insert Datum=%s Stunde=%s court=%s user=%s' %
           (self.current_date_name, l_tcztime.hour, court, self.courtUser[USER_USERNAME]))
@@ -498,7 +481,7 @@ class ReservationApp(tkinter.Frame):
               }
     # encode data to a byte stream
     params = urlencode(l_post).encode('utf-8')
-    
+
     urlstring = URL_PUTHOURS % iTczHour[HOUR_ID]
     print(urlstring)
     req = urllib.request.Request(urlstring, data=params, headers=HTTP_HEADER, method='PATCH')
@@ -518,29 +501,34 @@ class ReservationApp(tkinter.Frame):
       return
     lTczHour = self.fetchHour(court, hour)
     if lTczHour:
-      # hour is already existing - users are only allowed to change trainer
-      if lTczHour[HOUR_TRAINER]:
-        # this is a trainer hour
-        lTrainerId = self.getUserIdTrainer()
-        print('hourid=%d, userid=%d' % (lTczHour[HOUR_USERID], self.courtUser[USER_ID]))
-        if lTczHour[HOUR_USERID] == self.courtUser[USER_ID]:
-          # storno for trainer - set user to trainer
-          lNewUserId = lTrainerId
-          self.update_trainer_hour(lTczHour, lNewUserId)
-        else:
-          # reserve trainer if the hour is free (userid=trainer)
-          if lTczHour[HOUR_USERID] == lTrainerId:
-            lNewUserId = self.courtUser[USER_ID]
+      if self.courtUser[USER_ISSPECIAL]:
+        # special users will delete already reserved hours
+        self.delete_tcz_hour(lTczHour)
+      else:
+        # normal users are allowed to change free trainer hours
+        # or storno there own reservations
+        if lTczHour[HOUR_TRAINER]:
+          # this is a trainer hour
+          lTrainerId = self.getUserIdTrainer()
+          # print('hourid=%d, userid=%d' % (lTczHour[HOUR_USERID], self.courtUser[USER_ID]))
+          if lTczHour[HOUR_USERID] == self.courtUser[USER_ID]:
+            # storno for trainer - set user to trainer
+            lNewUserId = lTrainerId
             self.update_trainer_hour(lTczHour, lNewUserId)
+          else:
+            # reserve trainer if the hour is free (userid=trainer)
+            if lTczHour[HOUR_USERID] == lTrainerId:
+              lNewUserId = self.courtUser[USER_ID]
+              self.update_trainer_hour(lTczHour, lNewUserId)
+            else:
+              oldUser = self.getUserFromId(lTczHour[HOUR_USERID])
+              tkinter.messagebox.showerror('Fehler', ERR_OTHER_USER % oldUser[USER_USERNAME])
+        else:
+          if lTczHour[HOUR_USERID] == self.courtUser[USER_ID] or self.courtUser[USER_ISSPECIAL]:
+            self.delete_tcz_hour(lTczHour)
           else:
             oldUser = self.getUserFromId(lTczHour[HOUR_USERID])
             tkinter.messagebox.showerror('Fehler', ERR_OTHER_USER % oldUser[USER_USERNAME])
-      else:
-        if lTczHour[HOUR_USERID] == self.courtUser[USER_ID]:
-          self.delete_tcz_hour(lTczHour)
-        else:
-          oldUser = self.getUserFromId(lTczHour[HOUR_USERID])
-          tkinter.messagebox.showerror('Fehler', ERR_OTHER_USER % oldUser[USER_USERNAME])
     else:
       # hour not existing - insert a new reservation
       self.insert_tcz_hour(court, l_tcztime)
@@ -678,7 +666,7 @@ class ReservationApp(tkinter.Frame):
           label = ttk.Label(tframe, width=20, text=l_users[namind],
                             font=FONT14BOLD, background='white')
           label.bind("<Button-1>", self.do_select_user)
-          label.grid(row=l_row, column=l_col, padx=5, pady=5)
+          label.grid(row=l_row, column=l_col, padx=2, pady=2)
 
   def ui_make_user_super(self, event):
     """ make window for super users
@@ -748,6 +736,7 @@ class MainWindow:
     """
     if tkinter.messagebox.askokcancel("Beenden", "Programm beenden?"):
       self.app.timer.cancel()
+      self.app.dbConn.commit()
       self.app.dbConn.close()
       self.tk_tk.destroy()
 
@@ -769,5 +758,33 @@ class MainWindow:
 
 
 if __name__ == '__main__':
+  parser = argparse.ArgumentParser(description="app for tcz reservation")
+  parser.add_argument("-l", "--localhost",
+                      help="connect to localhost (django development server)",
+                      action="store_true")
+  parser.add_argument("-r", "--reservedhours",
+                      help="Reservierte Stunden aus der Vergangenheit vom Server holen",
+                      action="store_true")
+  parser.add_argument("-u", "--users",
+                      help="Mitgliederliste vom Server holen",
+                      action="store_true")
+  args = parser.parse_args()
+  GET_HOUR_FROM_SERVER = args.reservedhours
+  GET_USER_FROM_SERVER = args.users
+  if args.localhost:
+    # imports to use Django REST framework
+    URL_GETUSERS = 'http://127.0.0.1:8000/tczusers.json/'
+    URL_GETHOURS = 'http://127.0.0.1:8000/tczhours.json/'
+    URL_PUTHOURS = 'http://127.0.0.1:8000/tczhours/%d/'
+    URL_GETHOURS_DATE = 'http://127.0.0.1:8000/tczhours/atdate.json/?year=%d&month=%d&day=%d'
+    URL_GETHOURS_FROMNOW = 'http://127.0.0.1:8000/tczhours/fromnow.json/'
+    URL_POSTHOUR = 'http://127.0.0.1:8000/tczhours/%s/'
+  else:
+    URL_GETUSERS = 'https://tczellerndorf.pythonanywhere.com/tczusers.json/'
+    URL_GETHOURS = 'https://tczellerndorf.pythonanywhere.com/tczhours.json/'
+    URL_PUTHOURS = 'https://tczellerndorf.pythonanywhere.com/tczhours/%d/'
+    URL_GETHOURS_DATE = 'https://tczellerndorf.pythonanywhere.com/tczhours/atdate.json/?year=%d&month=%d&day=%d'
+    URL_GETHOURS_FROMNOW = 'https://tczellerndorf.pythonanywhere.com/tczhours/fromnow.json/'
+    URL_POSTHOUR = 'https://tczellerndorf.pythonanywhere.com/tczhours/%s/'
   MY_APP = MainWindow()
   MY_APP.tk_tk.mainloop()

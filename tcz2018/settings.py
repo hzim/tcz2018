@@ -25,7 +25,7 @@ SECRET_KEY = 'eeoonl&((nqx$ll@qdw64lh+%pm9)fkcwpb0ct56qi^h11%$lr'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['tczellerndorf.pythonanywhere.com']
+ALLOWED_HOSTS = ['tczellerndorf.pythonanywhere.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -59,8 +59,7 @@ ROOT_URLCONF = 'tcz2018.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates'),
-                 ],
+        'DIRS': [os.path.join(BASE_DIR, 'templates'), ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
