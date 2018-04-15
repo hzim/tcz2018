@@ -18,7 +18,7 @@ import json
 # import django
 
 # imports for working in Django environment
-#os.environ['DJANGO_SETTINGS_MODULE'] = 'tcz2018.settings'
+# os.environ['DJANGO_SETTINGS_MODULE'] = 'tcz2018.settings'
 # django.setup()
 
 from courtreservation.constants import BG_FREE,\
@@ -95,7 +95,10 @@ HOUR_TRAINER = 7
 def sqlDatabaseInit():
   """ connect to database and create tables
   """
-  dbFile = 'tcz_app.sqlite3'
+  if os.name == 'posix':
+    dbFile = '/home/pi/django/tcz2018/tcz_app.sqlite3'
+  else:
+    dbFile = 'tcz_app.sqlite3'
   createCourtUser = """ CREATE TABLE IF NOT EXISTS COURTUSER (
                           id INTEGER PRIMARY KEY,
                           username TEXT,
@@ -125,17 +128,17 @@ def sqlDatabaseInit():
     cursor.execute(createCourtHour)
     return dbConn
   except Error as e:
-    print(e)
+    print(datetime.now(), e)
     return None
 
 
 def get_date_text(i_date):
   """ set locale for Date format - windows is different
   """
-  if os.name == 'nt':
-    locale.setlocale(locale.LC_TIME, "deu_deu")
-  else:
+  if os.name == 'posix':
     locale.setlocale(locale.LC_TIME, "de_DE.UTF-8")
+  else:
+    locale.setlocale(locale.LC_TIME, "deu_deu")
   return i_date.strftime('%A, %d %B %Y')
 
 
@@ -151,6 +154,16 @@ def name_to_text(iTczUser, iTczHour):
   if iTczHour[HOUR_TRAINER] and not iTczUser[USER_ISFREETRAINER]:
     return TPI_NAME + '+' + iTczUser[USER_USERNAME]
   return iTczUser[USER_USERNAME]
+
+
+def time_until_end_of_day(dt=None):
+  """
+  Get timedelta until end of day on the datetime passed, or current time.
+  """
+  if dt is None:
+    dt = datetime.now()
+  tomorrow = dt + timedelta(days=1)
+  return datetime.combine(tomorrow, datetime.min.time()) - dt
 
 
 def user_has_reservation(iUser):
@@ -233,13 +246,14 @@ class ReservationApp(tkinter.Frame):
     self.get_all_users()
     self.current_date = date.today()
     self.current_date_name = get_date_name(self.current_date)
+    self.last_udpate_time = datetime.min
     self.do_date_today(update=False)
-    if GET_HOUR_FROM_SERVER:
+    if GET_HOUR_ALL_FROM_SERVER:
       self.get_all_hours()
-    else:
+    if GET_HOUR_NOW_FROM_SERVER:
       self.get_fromnow_hours()
     # start update timer_all
-    self.timer = Timer(30.0, self.update_fromnow_hours)
+    self.timer = Timer(5.0, self.updateTimer)
     self.timer.start()
 
   def getUserFromId(self, iUserId):
@@ -262,11 +276,11 @@ class ReservationApp(tkinter.Frame):
     try:
       self.response = urllib.request.urlopen(request)
     except HTTPError as e_exc:
-      print("server couldn't fulfill the request, Error code: ", e_exc.code, e_exc.reason)
+      print(datetime.now(), "server couldn't fulfill the request, Error code: ", e_exc.code, e_exc.reason)
       self.error_http = True
       self.response = None
     except URLError as e_exc:
-      print('Failed to reach a server, Reason: ', e_exc.reason)
+      print(datetime.now(), 'Failed to reach a server, Reason: ', e_exc.reason)
       self.error_url = True
       self.response = None
 
@@ -311,7 +325,7 @@ class ReservationApp(tkinter.Frame):
                )
           # print(stmt)
           self.dbCursor.execute(stmt)
-        self.dbConn.commit()        
+        self.dbConn.commit()
 
     # fill the name lists for separate for special and normal users
     self.dbCursor.execute('SELECT * FROM COURTUSER ORDER BY username')
@@ -377,16 +391,26 @@ class ReservationApp(tkinter.Frame):
   def update_curr_hours(self):
     """ update current date
     """
-    self.get_date_hours(self.current_date)
+    lPauseTime = timedelta(seconds=120)
+    lNow = datetime.now()
+    if lNow - self.last_udpate_time > lPauseTime:
+      print(lNow, 'Update requested')
+      self.last_udpate_time = datetime.now()
+      self.get_fromnow_hours()
 
-  def update_fromnow_hours(self):
-    """ update all relevant reserved hours
+  def updateTimer(self):
+    """ update Timer expired - do some udates
     """
-    # destroy all data which will be requested
-    self.get_fromnow_hours()
-    print('restart timer: ' + str(datetime.now()))
+    # update from server
+    # self.get_fromnow_hours()
+
+    # set the current date and update display
+    self.do_date_today()
+    updateAgain = time_until_end_of_day().seconds + 3600
+    print(datetime.now(), ' updateTimer in %d' % updateAgain)
+    # restart the timer again
     self.timer.cancel()
-    self.timer = Timer(3600.0, self.update_fromnow_hours)
+    self.timer = Timer(updateAgain, self.updateTimer)
     self.timer.start()
 
   def fetchHour(self, court, hour):
@@ -423,7 +447,7 @@ class ReservationApp(tkinter.Frame):
   def delete_tcz_hour(self, iHour):
     """ delete the hour
     """
-    print('Delete Datum=%s Stunde=%s Platz=%s username=%s' %
+    print(datetime.now(), 'Delete Datum=%s Stunde=%s Platz=%s username=%s' %
           (self.current_date_name, iHour[HOUR_HOUR], iHour[HOUR_COURT], self.courtUser[USER_USERNAME]))
     req = urllib.request.Request(URL_POSTHOUR % iHour[HOUR_ID],
                                  data=None,
@@ -440,12 +464,12 @@ class ReservationApp(tkinter.Frame):
     l_freehour = self.isFreeHour(l_tcztime)
     l_trainer = self.courtUser[USER_ISFREETRAINER]
 
-    if not l_freehour:
+    if not l_freehour and not self.courtUser[USER_ISSPECIAL]:
       if user_has_reservation(self.courtUser):
         tkinter.messagebox.showerror('Fehler', ERR_HOUR_PER_USER)
         return
 
-    print('Insert Datum=%s Stunde=%s court=%s user=%s' %
+    print(datetime.now(), 'Insert Datum=%s Stunde=%s court=%s user=%s' %
           (self.current_date_name, l_tcztime.hour, court, self.courtUser[USER_USERNAME]))
     l_post = {'tcz_date': self.current_date_name,
               'tcz_user': self.courtUser[USER_ID],
@@ -470,7 +494,7 @@ class ReservationApp(tkinter.Frame):
     l_freehour = False
     l_trainer = True
 
-    print('Update id=%d, Datum=%s Stunde=%s court=%s user=%s newId=%d' %
+    print(datetime.now(), 'Update id=%d, Datum=%s Stunde=%s court=%s user=%s newId=%d' %
           (iTczHour[HOUR_ID], self.current_date_name, iTczHour[HOUR_HOUR], iTczHour[HOUR_COURT], self.courtUser[USER_USERNAME], iNewUserId))
     l_post = {'id': iTczHour[HOUR_ID],
               'tcz_date': iTczHour[HOUR_DATE],
@@ -485,7 +509,6 @@ class ReservationApp(tkinter.Frame):
     params = urlencode(l_post).encode('utf-8')
 
     urlstring = URL_PUTHOURS % iTczHour[HOUR_ID]
-    print(urlstring)
     req = urllib.request.Request(urlstring, data=params, headers=HTTP_HEADER, method='PATCH')
     if self.request_from_server(req, ERR_NO_RESERVATION % self.courtUser[USER_USERNAME]):
       # refresh from the server
@@ -548,6 +571,7 @@ class ReservationApp(tkinter.Frame):
                               width=25)
     self.lab_hint = ttk.Label(self.frame1, text='Reservieren/Freigeben für:',
                               font=FONT14NORMAL)
+    self.lab_hint.bind("<Button-1>", self.do_deselect_user)
     self.lab_hint.bind("<Double-1>", self.ui_make_user_super)
     self.but_user = ttk.Button(self.frame1, text=self.user_name, style='Date.TButton', width=25)
     self.but_user.bind("<Button-1>", self.ui_make_user_normal)
@@ -589,7 +613,6 @@ class ReservationApp(tkinter.Frame):
   def do_update_mainframe(self):
     """ update the main frame
     """
-    self.last_udpate_time = datetime.now()
     l_allreserved = set()
     self.dbCursor.execute("SELECT * from COURTHOUR where tcz_date='%s'" % self.current_date_name)
     lAllHours = self.dbCursor.fetchall()
@@ -644,7 +667,7 @@ class ReservationApp(tkinter.Frame):
     self.user_win.wm_title("Wähle Mitglied")
     tframe = ttk.Frame(self.user_win)
     tframe.pack(expand=1, fill=tkinter.BOTH)
-    if os.name != 'nt':
+    if os.name == 'posix':
       self.user_win.attributes('-zoomed', True)  # maximize window
     # load the user list for normal or superusers
     if i_super:
@@ -668,7 +691,7 @@ class ReservationApp(tkinter.Frame):
           label = ttk.Label(tframe, width=20, text=l_users[namind],
                             font=FONT14BOLD, background='white')
           label.bind("<Button-1>", self.do_select_user)
-          label.grid(row=l_row, column=l_col, padx=2, pady=2)
+          label.grid(row=l_row, column=l_col, padx=2, pady=2, sticky=tkinter.N+tkinter.S)
 
   def ui_make_user_super(self, event):
     """ make window for super users
@@ -687,6 +710,13 @@ class ReservationApp(tkinter.Frame):
     self.courtUser = self.getUserFromName(self.user_name)
     self.but_user.configure(text=self.user_name)
     self.user_win.destroy()
+
+  def do_deselect_user(self, event):
+    """ deselect the user
+    """
+    self.user_name = INITIAL_USER
+    self.courtUser = None
+    self.but_user.configure(text=self.user_name)
 
   def do_date_prev(self):
     """ move one day back
@@ -724,7 +754,7 @@ class MainWindow:
     self.tk_tk = tkinter.Tk()
     self.tk_tk.protocol("WM_DELETE_WINDOW", self.do_destroy_main_window)
     self.tk_tk.wm_title("Tennisplatz Reservierung")
-    if os.name != 'nt':
+    if os.name == 'posix':
       # attributes only works for UNIX
       self.tk_tk.attributes('-zoomed', True)  # maximize window
     self.app = ReservationApp(self.tk_tk)
@@ -746,7 +776,7 @@ class MainWindow:
     """ toggle the fullscreen mode
     """
     self.state = not self.state  # Just toggling the boolean
-    if os.name != 'nt':
+    if os.name == 'posix':
       self.tk_tk.attributes("-fullscreen", self.state)
     return "break"
 
@@ -754,7 +784,7 @@ class MainWindow:
     """ stop the full screen mode
     """
     self.state = False
-    if os.name != 'nt':
+    if os.name == 'posix':
       self.tk_tk.attributes("-fullscreen", False)
     return "break"
 
@@ -764,14 +794,18 @@ if __name__ == '__main__':
   parser.add_argument("-l", "--localhost",
                       help="connect to localhost (django development server)",
                       action="store_true")
-  parser.add_argument("-r", "--reservedhours",
-                      help="Reservierte Stunden aus der Vergangenheit vom Server holen",
+  parser.add_argument("-a", "--allhours",
+                      help="Alle reservierten Stunden vom Server holen",
+                      action="store_true")
+  parser.add_argument("-n", "--nowhours",
+                      help="Reservierte Stunden ab heute vom Server holen",
                       action="store_true")
   parser.add_argument("-u", "--users",
                       help="Mitgliederliste vom Server holen",
                       action="store_true")
   args = parser.parse_args()
-  GET_HOUR_FROM_SERVER = args.reservedhours
+  GET_HOUR_ALL_FROM_SERVER = args.allhours
+  GET_HOUR_NOW_FROM_SERVER = args.nowhours
   GET_USER_FROM_SERVER = args.users
   if args.localhost:
     # imports to use Django REST framework
