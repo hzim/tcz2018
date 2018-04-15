@@ -190,9 +190,8 @@ def courtreservation(request, year='0', month='0', day='0'):
         month = int(setdate[1])
         year = int(setdate[0])
         new_date = date(year, month, day)
-        if not request.user.isSpecial:
-          if date_is_wrong(new_date, l_today):
-            raise ValueError('MAX_HISTORY_DAYS')
+        if date_is_wrong(new_date, l_today):
+          raise ValueError('MAX_HISTORY_DAYS')
         # set the new date
         l_datetoshow = new_date
       except (ValueError, IndexError):
