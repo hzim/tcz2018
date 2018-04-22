@@ -1,5 +1,6 @@
 """ serializer for rest framework """
 
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 from courtuser.models import CourtUser
 from .models import TczHour
@@ -22,10 +23,21 @@ class TczHourSerializer(serializers.ModelSerializer):
                        tcz_hour=validated_data['tcz_hour'],
                        tcz_free=validated_data['tcz_free'],
                        tcz_trainer=validated_data['tcz_trainer'])
+    # check the user constraints to make new reservations
     if not validated_data['tcz_free']:
       if user_has_reservation(validated_data['tcz_user']):
         # user already run out of free reservation hours
         return None
+    # check if the hour is still free maybe somebody has already reserved it
+    try:
+      lExistHour = TczHour.objects.get(tcz_date=validated_data['tcz_date'],
+                                       tcz_hour=validated_data['tcz_hour'],
+                                       tcz_court=validated_data['tcz_court'])
+      # hour is already reserved - it cannot be reserved twice
+      return None
+    except ObjectDoesNotExist:
+      # hour is free - so I will save it
+      pass
     tcz_hour.save()
     return tcz_hour
 

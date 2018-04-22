@@ -15,10 +15,6 @@ body{
     grid-area: header_lock;
 }
 
-.header_lock {
-    grid-area: header_lock;
-}
-
 .header_date_label {
     grid-area: header_date_label;
 }
