@@ -210,6 +210,8 @@ class ReservationButton():
     """ event when button is pressed
     """
     # print('pressed court=%d, hour=%d' % (self.court,self.hour))
+    if not CHANGE_HOURS_ALLOWED:
+      return
     if self.app.courtUser is None:
       tkinter.messagebox.showerror('Fehler', 'Bitte zuerst Mitglied auswählen')
     else:
@@ -243,7 +245,8 @@ class ReservationApp(tkinter.Frame):
     self.ui_make_header()
     self.ui_make_main()
     self.ui_make_footer()
-    self.get_all_users()
+    if CHANGE_HOURS_ALLOWED:
+      self.get_all_users()
     self.current_date = date.today()
     self.current_date_name = get_date_name(self.current_date)
     self.last_udpate_time = datetime.min
@@ -663,6 +666,9 @@ class ReservationApp(tkinter.Frame):
   def ui_make_user_window(self, i_super):
     """ make the user window
     """
+    if not CHANGE_HOURS_ALLOWED:
+      tkinter.messagebox.showinfo('Inforamtion', 'Reservierungen bitte auf https://tczellerndorf.pythonanywhere.com')
+      return
     self.user_win = tkinter.Toplevel(self)
     self.user_win.wm_title("Wähle Mitglied")
     tframe = ttk.Frame(self.user_win)
@@ -797,6 +803,9 @@ if __name__ == '__main__':
   parser.add_argument("-a", "--allhours",
                       help="Alle reservierten Stunden vom Server holen",
                       action="store_true")
+  parser.add_argument("-c", "--changehours",
+                      help="Reservierungen erlaubt",
+                      action="store_true")
   parser.add_argument("-n", "--nowhours",
                       help="Reservierte Stunden ab heute vom Server holen",
                       action="store_true")
@@ -807,6 +816,7 @@ if __name__ == '__main__':
   GET_HOUR_ALL_FROM_SERVER = args.allhours
   GET_HOUR_NOW_FROM_SERVER = args.nowhours
   GET_USER_FROM_SERVER = args.users
+  CHANGE_HOURS_ALLOWED = args.changehours
   if args.localhost:
     # imports to use Django REST framework
     URL_GETUSERS = 'http://127.0.0.1:8000/tczusers.json/'
