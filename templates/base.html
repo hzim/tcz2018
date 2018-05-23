@@ -82,7 +82,7 @@
       <div class="header_login_label">angemeldet als:</div>
       <div class="header_login_name">{{ user.get_username }}</div>
       <div class="header_login_link">
-        <a href="{% url 'user_logout' %}">
+        <a href="{% url 'account_logout' %}">
           Abmelden
           <span class="icon">
             <img src="{% static 'img/exit.png' %}">
@@ -93,7 +93,7 @@
       <div class="header_login_label"></div>
       <div class="header_login_name"></div>
       <div class="header_login_link">
-        <a href="{% url 'user_login' %}">
+        <a href="{% url 'account_login' %}">
           Anmelden
           <span class="icon">
             <img src="{% static 'img/enter.png' %}">
@@ -103,7 +103,7 @@
       {% endif %}
     </header>
 
-    {% block body_block %}
+    {% block content_block %}
     {% endblock %}
   <footer>
     &copy 2018 Tennisclub Zellerndorf, ZVR 330668948

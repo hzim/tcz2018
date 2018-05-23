@@ -30,6 +30,8 @@ router.register(r'tczhours', TczHourViewSet)
 
 urlpatterns = [
     url(r'^$', helppage, name='helppage'),
+    # url(r'^accounts/', include('registration.backends.hmac.urls')),
+    url(r'^accounts/', include('allauth.urls')),
     url(r'^(?P<year>[0-9]{4})/(?P<month>[0-9]{2})/(?P<day>[0-9]{2})/',
         courtreservation, name='courtreservation'),
     url(r'^user_login/$', auth_views.login, {'template_name': 'courtuser/login.html'}, name='user_login'),

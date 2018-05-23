@@ -23,7 +23,7 @@ class CourtUser(AbstractUser):
                                   default=False)
   isSpecial = models.BooleanField('Sonder Mitglied',
                                   help_text='Keine Reservierungseinschränkungen prüfen',
-                                  default=True)
+                                  default=False)
   isFreeTrainer = models.BooleanField('Trainer',
                                       help_text='Freie Trainerstunden werden mit diesem Mitglied eingetragen',
                                       default=False)
