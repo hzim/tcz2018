@@ -667,7 +667,7 @@ class ReservationApp(tkinter.Frame):
     """ make the user window
     """
     if not CHANGE_HOURS_ALLOWED:
-      tkinter.messagebox.showinfo('Inforamtion', 'Reservierungen bitte auf https://tczellerndorf.pythonanywhere.com')
+      tkinter.messagebox.showinfo('Information', 'Reservierungen bitte auf https://tczellerndorf.pythonanywhere.com')
       return
     self.user_win = tkinter.Toplevel(self)
     self.user_win.wm_title("Wähle Mitglied")
@@ -801,7 +801,7 @@ if __name__ == '__main__':
                       help="connect to localhost (django development server)",
                       action="store_true")
   parser.add_argument("-a", "--allhours",
-                      help="Alle reservierten Stunden vom Server holen",
+                      help="Keine reservierten Stunden vom Server holen",
                       action="store_true")
   parser.add_argument("-c", "--changehours",
                       help="Reservierungen erlaubt",
@@ -813,7 +813,7 @@ if __name__ == '__main__':
                       help="Mitgliederliste vom Server holen",
                       action="store_true")
   args = parser.parse_args()
-  GET_HOUR_ALL_FROM_SERVER = args.allhours
+  GET_HOUR_ALL_FROM_SERVER = not args.allhours
   GET_HOUR_NOW_FROM_SERVER = args.nowhours
   GET_USER_FROM_SERVER = args.users
   CHANGE_HOURS_ALLOWED = args.changehours
