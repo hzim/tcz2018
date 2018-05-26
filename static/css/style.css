@@ -139,6 +139,10 @@ body{
     font-size: 25px;
 }
 
+.errorlist{
+    color: #ff0000;
+    font-size: 25px;
+}
 .message-lock{
     padding: 10px;
     font-size: 20px;
