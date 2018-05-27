@@ -253,8 +253,9 @@ class ReservationApp(tkinter.Frame):
     self.do_date_today(update=False)
     if GET_HOUR_ALL_FROM_SERVER:
       self.get_all_hours()
-    if GET_HOUR_NOW_FROM_SERVER:
-      self.get_fromnow_hours()
+    else:
+      if GET_HOUR_NOW_FROM_SERVER:
+        self.get_fromnow_hours()
     # start update timer_all
     self.timer = Timer(5.0, self.updateTimer)
     self.timer.start()
@@ -531,7 +532,8 @@ class ReservationApp(tkinter.Frame):
     if lTczHour:
       if self.courtUser[USER_ISSPECIAL]:
         # special users will delete already reserved hours
-        self.delete_tcz_hour(lTczHour)
+        if tkinter.messagebox.askyesno("Reservieren/Freigeben", "Stunde stornieren"):
+          self.delete_tcz_hour(lTczHour)
       else:
         # normal users are allowed to change free trainer hours
         # or storno there own reservations
@@ -542,24 +544,28 @@ class ReservationApp(tkinter.Frame):
           if lTczHour[HOUR_USERID] == self.courtUser[USER_ID]:
             # storno for trainer - set user to trainer
             lNewUserId = lTrainerId
-            self.update_trainer_hour(lTczHour, lNewUserId)
+            if tkinter.messagebox.askyesno("Reservieren/Freigeben", "Trainerstunde stornieren"):
+              self.update_trainer_hour(lTczHour, lNewUserId)
           else:
             # reserve trainer if the hour is free (userid=trainer)
             if lTczHour[HOUR_USERID] == lTrainerId:
               lNewUserId = self.courtUser[USER_ID]
-              self.update_trainer_hour(lTczHour, lNewUserId)
+              if tkinter.messagebox.askyesno("Reservieren/Freigeben", "Trainerstunde reservieren"):
+                self.update_trainer_hour(lTczHour, lNewUserId)
             else:
               oldUser = self.getUserFromId(lTczHour[HOUR_USERID])
               tkinter.messagebox.showerror('Fehler', ERR_OTHER_USER % oldUser[USER_USERNAME])
         else:
           if lTczHour[HOUR_USERID] == self.courtUser[USER_ID] or self.courtUser[USER_ISSPECIAL]:
-            self.delete_tcz_hour(lTczHour)
+            if tkinter.messagebox.askyesno("Reservieren/Freigeben", "Stunde stornieren"):
+              self.delete_tcz_hour(lTczHour)
           else:
             oldUser = self.getUserFromId(lTczHour[HOUR_USERID])
             tkinter.messagebox.showerror('Fehler', ERR_OTHER_USER % oldUser[USER_USERNAME])
     else:
       # hour not existing - insert a new reservation
-      self.insert_tcz_hour(court, l_tcztime)
+      if tkinter.messagebox.askyesno("Reservieren/Freigeben", "Stunde reservieren"):
+        self.insert_tcz_hour(court, l_tcztime)
 
   def ui_make_header(self):
     """ make the header of the app
@@ -804,7 +810,7 @@ if __name__ == '__main__':
                       help="Keine reservierten Stunden vom Server holen",
                       action="store_true")
   parser.add_argument("-c", "--changehours",
-                      help="Reservierungen erlaubt",
+                      help="Reservierungen nicht erlaubt",
                       action="store_true")
   parser.add_argument("-n", "--nowhours",
                       help="Reservierte Stunden ab heute vom Server holen",
@@ -815,8 +821,8 @@ if __name__ == '__main__':
   args = parser.parse_args()
   GET_HOUR_ALL_FROM_SERVER = not args.allhours
   GET_HOUR_NOW_FROM_SERVER = args.nowhours
-  GET_USER_FROM_SERVER = args.users
-  CHANGE_HOURS_ALLOWED = args.changehours
+  GET_USER_FROM_SERVER = not args.users
+  CHANGE_HOURS_ALLOWED = not args.changehours
   if args.localhost:
     # imports to use Django REST framework
     URL_GETUSERS = 'http://127.0.0.1:8000/tczusers.json/'
