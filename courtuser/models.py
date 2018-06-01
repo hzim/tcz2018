@@ -27,6 +27,9 @@ class CourtUser(AbstractUser):
   isFreeTrainer = models.BooleanField('Trainer',
                                       help_text='Freie Trainerstunden werden mit diesem Mitglied eingetragen',
                                       default=False)
+  isGuest = models.BooleanField('Gastspieler',
+                                help_text='Gastspieler',
+                                default=True)
   # to allow blanks in username it is necessary to override the username definition from AbstractUser
   # and attach the modified validator to the username
   username_validator = MyValidator()

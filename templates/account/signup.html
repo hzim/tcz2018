@@ -8,6 +8,14 @@
 <h1>{% trans "Sign Up" %}</h1>
 
 <p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
+<p>Für die Anmeldung benötigen wir ihren Namen und Ihre E-Mail Adresse.
+Falls Sie <b>keine</b> gültige E-Mail Adresse angeben, können Sie gegebenfalls ihr Passwort nicht mehr zurücksetzen.
+<br>
+Wenn Sie eine gültige E-Mail Adresse angeben, wird automatisch eine Bestätigungsmail an Sie gesendet.
+Bitte bestätigen Sie diese E-mail durch Klick auf den enthaltenen Link.
+<br>
+Anmerkung: Gastzugänge werden jährlich automatisch gelöscht.
+</p>
 
 <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
   {% csrf_token %}

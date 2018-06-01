@@ -7,9 +7,9 @@ from .models import CourtUser
 
 # change djangos admin list display
 UserAdmin.list_display = ('username', 'email', 'is_active', 'date_joined',
-                          'sendEmail', 'isSpecial', 'isFreeTrainer')
+                          'sendEmail', 'isGuest', 'isSpecial', 'isFreeTrainer')
 # add TCZ features to detail display
-UserAdmin.fieldsets += ((('TCZ'), {'fields': ('sendEmail', 'isSpecial', 'isFreeTrainer')}),)
+UserAdmin.fieldsets += ((('TCZ'), {'fields': ('sendEmail', 'isGuest', 'isSpecial', 'isFreeTrainer')}),)
 
 
 class CourtUserAdmin(UserAdmin):

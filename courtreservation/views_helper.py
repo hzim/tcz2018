@@ -13,7 +13,7 @@ from .constants import EMAIL_BODY_TEMPLATE, EMAIL_SUBJECT, EMAIL_ADDRESS,\
     EMAIL_ACTIONTEXT, SUCCESS_RESERVATION,\
     MAX_RESERVATION_DAYS,\
     MAX_FUTURE_DAYS,\
-    BG_FREE, BG_FREEHOUR, BG_OTHER, BG_OWN, BG_TPI, BG_TPI_FREE, BG_SUPER_USER,\
+    BG_FREE, BG_FREEHOUR, BG_OTHER, BG_OWN, BG_TPI, BG_TPI_FREE, BG_SUPER_USER, BG_GUEST_USER, \
     FREE_USER, TPI_NAME,\
     HOUR_START, HOURS_PER_DAY,\
     MIN_MONTH, MAX_MONTH, FREE_MINUTE,\
@@ -236,6 +236,8 @@ def make_choice_button(iCourt, iHour, tcz_hour, iUser):
       bgc = BG_TPI
   elif tcz_hour.tcz_user.isSpecial:
     bgc = BG_SUPER_USER
+  elif tcz_hour.tcz_user.isGuest:
+    bgc = BG_GUEST_USER
   elif tcz_hour.tcz_user.username == lusername:
     # reserved for me
     bgc = BG_OWN

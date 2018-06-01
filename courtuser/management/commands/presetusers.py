@@ -63,6 +63,7 @@ class Command(BaseCommand):
         lTrainer = True if strip_str[5] == 'X' else False
         lSuperUser = True if strip_str[6] == 'X' else False
         lSendEmail = True if strip_str[7] == 'X' else False
+        lIsGuest = True if strip_str[8] == 'X' else False
         lPassword = 'tc4zellerndorf' if lIsSpecial else 'tczellerndorf'
         if isNewUser:
           try:
@@ -74,6 +75,7 @@ class Command(BaseCommand):
                                                         last_name=lastname,
                                                         sendEmail=lSendEmail,
                                                         isSpecial=lIsSpecial,
+                                                        isGuest=lIsGuest,
                                                         isFreeTrainer=lTrainer)
               self.stdout.write(self.style.SUCCESS('superuser created "%s"' % username))
             else:
@@ -84,7 +86,15 @@ class Command(BaseCommand):
                                                    last_name=lastname,
                                                    sendEmail=lSendEmail,
                                                    isSpecial=lIsSpecial,
+                                                   isGuest=lIsGuest,
                                                    isFreeTrainer=lTrainer)
               self.stdout.write(self.style.SUCCESS('user created "%s"' % username))
           except ValueError:
             self.stdout.write(self.style.SUCCESS('error "%s"' % exc_info()[0]))
+        else:
+          user = CourtUser.objects.filter(username=username)[0]
+          if user.isGuest:
+            self.stdout.write(self.style.SUCCESS('user modified "%s"' % username))
+            user.isGuest = False
+            user.save()
+

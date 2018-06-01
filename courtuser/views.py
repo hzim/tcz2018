@@ -23,8 +23,9 @@ class UserViewSet(viewsets.ModelViewSet):
 def get_user_list(request, sel_user):
   """ get all users from the database
       sort the list by name and put the selected user on the first place of the selection list
-      only logged in superusers will see all other superuser
-      logged in normal users will only see normal users
+      - logged in superusers will see all other superuser
+      - logged in normal users will only see normal users
+      - logged in guest users will only see themself
   """
   own_user_name = ""
   selectedUser = []
@@ -36,15 +37,13 @@ def get_user_list(request, sel_user):
 
     own_user_name = sel_user.username
     # restricted users see all restricted users, special users all special users
-    allUsers = CourtUser.objects.all()
-    for user in allUsers:
-      if request.user.isSpecial:
-        if user.isSpecial and not user.is_superuser:
-          selectedUser.append(user.username)
-      else:
-        if not user.isSpecial:
-          selectedUser.append(user.username)
-  # sort by names and insert current user as first selection entry
-  selectedUser.sort()
-  selectedUser.insert(0, own_user_name)
+    allUsers = CourtUser.objects.none()
+    if not request.user.isGuest:
+      allUsers = CourtUser.objects.filter(isSpecial=request.user.isSpecial,
+                                          is_superuser=False,
+                                          isGuest=False).order_by('username')
+      for user in allUsers:
+        selectedUser.append(user.username)
+    # insert current user as first selection entry
+    selectedUser.insert(0, own_user_name)
   return selectedUser

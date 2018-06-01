@@ -8,6 +8,8 @@
     <h1>{% trans "E-mail Addresses" %}</h1>
 {% if user.emailaddress_set.all %}
 <p>{% trans 'The following e-mail addresses are associated with your account:' %}</p>
+<br>
+Anmerkung: die primäre E-Mail Adresse kann nicht entfernt werden. Dazu ist es notwendig eine neue E-Mail Adresse einzugeben.
 
 <form action="{% url 'account_email' %}" class="email_list" method="post">
 {% csrf_token %}

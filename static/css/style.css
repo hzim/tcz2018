@@ -181,6 +181,9 @@ body{
     border: 0;
 }
 
+.primary_email{
+    font-size: 20px;
+}
 .userinput{
     font-size: 28px;
     margin: 0px;
