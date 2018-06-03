@@ -3,18 +3,31 @@
 <div class="message"></div>
 <div class="content">
     <h1>TC Zellerndorf Platzeinteilung</h1>
-    <p>Hier können Mitglieder des TC-Zellerndorfs:
+    <p>Auf dieser Seite gibt es Informationen über die Tennisplätze des TC-Zellerndorfs:
         <ul>
-        <li>die Platzverfügbarkeit ansehen</li>
-        <li>für sich und andere Mitglieder Plätze reservieren/freigeben</li>
-        <li>Informationen zu Platzsperren ansehen</li>
+        <li>Informationen zum <a href="#Platzinformation">Bespielbarkeit der Plätze</a></li>
+        <li>Information zur <a href="#Platzreservierung">Platzreservierung</a></li>
         </ul>
     </p>
-    <p>Diese Seite besteht folgenden Unterseiten:
+    <p>Mitglieder des TC-Zellerndorfs können:
+        <ul>
+        <li>Sich <a href="#Anmeldung">anmelden</a></li>
+        <li>Plätze für sich und andere Mitglieder<a href="#Platzreservierung">reservieren/freigeben</a></li>
+        </ul>
+    </p>
+    <p>Gastmitglieder können:
+        <ul>
+        <li>Sich als Gastspieler <a href="#Registrierung">registrieren</a></li>
+        <li>Sich <a href="#Anmeldung">anmelden</a></li>
+        <li>Plätze für sich <a href="#Platzreservierung">reservieren/freigeben</a></li>
+        </ul>
+        </p>
+    <p>Es gibt folgenden Unterseiten:
         <ul>
             <li>Hilfeseite</li>
-            <li>Anmeldeseite</li>
-            <li>Reservierungsseite</li>
+            <li>Anmeldeformular</li>
+            <li>Registrierungsformular (für Gäste)</li>
+            <li>Platzreservierungsseite</li>
             <li>Platzinformationsseite</li>
         </ul> 
     </p>
@@ -28,18 +41,19 @@
         Im nicht angemeldeten Zustand ist keine Änderung von Reservierungen erlaubt.
     </p>
     <p>
-        <img src="{% static 'img/navbar_anmelden.png' %}" alt="Anmeldeformular öffnen"> Das Anmeldeformular wird angewählt
+        <img src="{% static 'img/navbar_anmelden.png' %}" alt="Anmeldeformular öffnen"> Das Anmeldeformular wird angewählt. 
+        Aus dem Anmeldeformular kann für Gäste das Registrierungsformular geöffnet werden.
     </p>
     <p>
         <img src="{% static 'img/navbar_hilfe.png' %}" alt="Hilefeseite anzeigen"> Diese Hilfeseite wird angewählt
     </p>
     <hr>
-    <h2>Anmeldeformular</h2>
-    <p>Im Anmeldeformular müssen Namen und Passwort eingegeben werden. Der Name besteht aus Familien- und Vorname eines Mitglieds
-        (getrennt durch ein Leerzeichen).
+    <h2 id="Anmeldung">Anmeldeformular</h2>
+    <p>Im Anmeldeformular müssen Namen und Passwort eingegeben werden. Der Name besteht aus Familien- und Vorname eines Mitglieds bzw. registrierten Gasts
+    (getrennt durch ein Leerzeichen).<br>
+    Nicht registrierte Gäste können das Registrierungsformular aufrufen und so einen Gast Zugang erstellen. (klick auf Gast Registrierung)
     </p>
 
-    <img src="{% static 'img/login_form.png' %}" alt="Login Formular">
     <p>
         Wurden Name und Passwort falsch eingegeben wird zur erneuten Eingabe aufgefordert. Bei erfolgreicher Anmeldung wird automatisch
         die Platzeinteilung des aktuellen Tages angewählt - wobei in der Navigationsleiste "Anmelden" durch die "Abmelden"
@@ -49,10 +63,21 @@
         <img src="{% static 'img/navbar_abmelden.png' %}" alt="Abmelden">
     </p>
     <p>
-        Durch Klick auf "Abmelden" wird der angemeldete Benutzer wird abgemeldet
+        Durch Klick auf "Abmelden" wird der angemeldete Benutzer abgemeldet.
     </p>
     <hr>
-    <h2>Platzeinteilung</h2>
+    
+    <h2 id="Registrierung">Registrierungsformular (für Gäste)</h2>
+    <p> Zum Registrierungsformular gelangen Sie aus dem Anmeldeformular durch Klick auf "Gast Registrierung".
+        Im Registrierungsformular müssen Namen und Passwort eingegeben werden. Der Name sollte aus Familien- und Vorname des Gasts
+        (getrennt durch ein Leerzeichen) und wenn möglich eine gültige E-Mail Adresse enthalten.
+        Ohne gültige E-Mail Adresse kann ein eventuell vergessenes Passwort nicht zurückgesetzt werden. 
+        Nähere Erläuterungen finden Sie im Registrierungsformular.
+    </p>
+    <p>
+    </p>
+    <hr>
+    <h2 id="Platzreservierung">Platzreservierung</h2>
     <h3>Anzeige des Datums</h3>
     <p>Bei den meisten Browsern (firefox, chrome, edge) öffnet sich durch einen Klick in das Datumsfeld ein Datumsdialog
         (bei älternen Browsern kann das Datum direkt in das Feld eingegeben werden). 
@@ -109,7 +134,7 @@
        <img src="{% static 'img/reservierung_form_belegt_tpi.png' %}" alt="Stunde reservieren">
     </p>
     <hr>
-    <h2>Platz Information</h2>
+    <h2 id="Platzinformation">Platz Information</h2>
     <p>
         Durch Drücken auf "Platz Ok" wird die Platz Informationsseite angewählt. 
         Hier können berechtigte Mitglieder Platzsperren verhängen.
@@ -133,7 +158,7 @@
     <ul>
         <li>Bei der ersten Anwahl wird immer der aktuelle Tag vorgelegt</li>
         <li>Zum Reservieren eines Platzes bitte zuerst "Anmelden" - sonst kann man nur ansehen</li>
-        <li>Reserviert werden kann für jedes Mitglied.</li>
+        <li>Reserviert werden kann für jedes Mitglied. Gäste können nur für sich selbst reservieren.</li>
         <li>In der Mitgliederliste kann durch eintippen eines Namesteils navigiert werden</li>
         <li>Reservieren durch Anklicken eines freien Platzes und Klick auf "Speichern"</li>
         <li>Freigeben funktioniert genauso - Es können nur Stunden für das eingestellte Mitglied freigegeben werden</li>
@@ -155,7 +180,7 @@
 
     <h3>Ausnahmen gibt es für "besondere" Mitglieder z.B. "Damen1", "Herren1", "TCZ"</h3>
     <ul>
-        <li>diese haben keine Einschränkung bei der Anzahl der reervierten Stunden</li>
+        <li>diese haben keine Einschränkung bei der Anzahl der reservierten Stunden</li>
         <li>können Platzinformationen eingeben und löschen</li>
     </ul>
 </div>

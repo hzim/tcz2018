@@ -258,6 +258,12 @@ a{
     margin-left: 10px;
 }
 
+li > a{
+    color: #e8491d;
+    text-decoration: none;
+    font-size: 15px;
+    margin-left: 5px;
+}
 a:hover{
     color: #ff0009;
 }

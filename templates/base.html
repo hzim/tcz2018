@@ -80,7 +80,10 @@
 
       {% if user.is_authenticated %}
       <div class="header_login_label">angemeldet als:</div>
+      <!--
       <div class="header_login_name"><a href="{% url 'account_email' %}">{{ user.get_username }}</a></div>
+      -->
+      <div class="header_login_name">{{ user.get_username }}</div>
       <div class="header_login_link">
         <a href="{% url 'account_logout' %}">
           Abmelden

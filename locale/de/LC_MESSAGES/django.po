@@ -492,7 +492,7 @@ msgstr ""
 #: templates/account/login.html:6 templates/account/login.html:10
 #: templates/account/login.html:43
 msgid "Sign In"
-msgstr "Anmeldung"
+msgstr "Anmelden"
 
 #: templates/account/login.html:15
 #, python-format
@@ -516,7 +516,7 @@ msgid ""
 "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
-"Sie sind kein Mitglied und haben noch keinen Gastzugang bei uns? Dann <a href=\"%(signup_url)s\">erstellen</"
+"Sie sind kein Mitglied und haben Sich noch nicht als Gast registriert und wollen einen Platz reservieren? <br>Dann <a href=\"%(signup_url)s\">erstellen</"
 "a> Sie bitte einen Gastzugang."
 
 #: templates/account/login.html:42

@@ -6,18 +6,27 @@
 
 {% block content_block %}
 <h1>{% trans "Sign Up" %}</h1>
+<p>
+    Sie sind bereits Mitglied oder haben schon einen Gastzugang? Dann bitte hier
+    <form action="{% url 'account_login' %}">
+      <button type="submit">Anmelden &raquo</button>
+    </form>
+</p>
 
-<p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
-<p>Für die Anmeldung benötigen wir ihren Namen und Ihre E-Mail Adresse.
-Falls Sie <b>keine</b> gültige E-Mail Adresse angeben, können Sie gegebenfalls ihr Passwort nicht mehr zurücksetzen.
-<br>
+<p>Für die Registrierung benötigen wir ihren Namen und (optional) Ihre E-Mail Adresse.<br>
+Die Registrierung ist auch ohne E-Mail Adresse möglich. In diesem Fall geben Sie in das Feld eine pseudo Adresse ein (z.B abcde@no.at)<br>
+Falls Sie <b>keine</b> gültige E-Mail Adresse angeben, können Sie gegebenfalls ihr Passwort nicht mehr zurücksetzen.<br>
 Wenn Sie eine gültige E-Mail Adresse angeben, wird automatisch eine Bestätigungsmail an Sie gesendet.
-Bitte bestätigen Sie diese E-mail durch Klick auf den enthaltenen Link.
-<br>
-Anmerkung: Gastzugänge werden jährlich automatisch gelöscht.
+Bitte bestätigen Sie diese E-mail durch Klick auf den enthaltenen Link.<br>
+Nach der Registrierung können Sie sich mit ihrem Namen und Passwort anmelden und Platzreservierungen vornehmen.<br>
+Für die Bezahlung der kosumierten Stunden wenden Sie sich bitte an ein Vorstandsmitglied.<br>
+Anmerkung: Für Ihre Anmeldedaten gelten die Regeln für den Datenschutz.
+<a href="http://www.tczellerndorf.at/index.php/club/datenschutzerklaerung">Bitte beachten Sie auch die Datenschutzerklärung</a>
 </p>
 
 <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+  <fieldset>
+  <legend>Registrierung als Gast:</legend>
   {% csrf_token %}
   <div id="my_form">
   {{ form.as_p }}
@@ -26,6 +35,8 @@ Anmerkung: Gastzugänge werden jährlich automatisch gelöscht.
   <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
   {% endif %}
   <button type="submit">{% trans "Sign Up" %} &raquo;</button>
+</fieldset>
+<p></p>
 </form>
 
 {% endblock %}
