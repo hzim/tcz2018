@@ -1,12 +1,41 @@
 """ views for the court locking app """
 import locale
 import os
+from datetime import date
 
 from django.views.generic import CreateView, ListView, DeleteView
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from rest_framework import viewsets
+from rest_framework.decorators import list_route
+from rest_framework.authentication import SessionAuthentication,\
+    BasicAuthentication,\
+    TokenAuthentication
 
 from .models import TczCourtStatus, TczCourtStatusForm
+from .serializers import TczCourtStatusSerializer
+from rest_framework.response import Response
+
+
+class TczCourtStatusViewSet(viewsets.ModelViewSet):
+  """
+  API endpoint that allows users to be viewed or edited.
+  """
+  queryset = TczCourtStatus.objects.all().order_by('lock_date')
+  serializer_class = TczCourtStatusSerializer
+  authentication_classes = (SessionAuthentication,
+                            BasicAuthentication,
+                            TokenAuthentication)
+  @list_route()
+  def atdate(self, request, format=None):
+    """ returns the reserved status from the day specified in the request parameters
+    """
+    ldate = date(year=int(request.query_params['year']),
+                 month=int(request.query_params['month']),
+                 day=int(request.query_params['day']))
+    tczStatus = TczCourtStatus.objects.filter(lock_date=ldate).order_by('lock_date')
+    serializer = self.get_serializer(tczStatus, many=True)
+    return Response(serializer.data)
 
 
 def getCourtStatus(iDate):

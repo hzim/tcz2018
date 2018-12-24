@@ -20,13 +20,17 @@ from rest_framework import routers
 
 from courtreservation.views import helppage, courtreservation, TczHourViewSet
 from courtuser.views import UserViewSet
-from courtstatus.views import ViewIndex, ViewCreate, ViewDelete
+from courtstatus.views import ViewIndex, ViewCreate, ViewDelete, TczCourtStatusViewSet
+from courtdata.views import TczCourtStatusAndHourViewSet
 
 
 # rest framwork
 router = routers.DefaultRouter()
 router.register(r'tczusers', UserViewSet)
 router.register(r'tczhours', TczHourViewSet)
+router.register(r'tczcourtstatus', TczCourtStatusViewSet)
+router.register(r'tczcourtdata', TczCourtStatusAndHourViewSet, basename='')
+
 
 urlpatterns = [
     url(r'^$', helppage, name='helppage'),

@@ -25,7 +25,7 @@ SECRET_KEY = 'eeoonl&((nqx$ll@qdw64lh+%pm9)fkcwpb0ct56qi^h11%$lr'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['tczellerndorf.pythonanywhere.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['tczellerndorf.pythonanywhere.com', 'localhost', '127.0.0.1', '10.0.2.2']
 
 
 # Application definition
@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'courtreservation',
     'courtstatus',
     'courtuser',
+    'courtdata',
     'rest_framework',
     'rest_framework.authtoken',
 ]
